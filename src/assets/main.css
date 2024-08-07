@@ -1,35 +1,35 @@
 @import './base.css';
 
-#app {
-  max-width: 1280px;
+:root {
+  --orange: #ec5a13;
+  --orange-pale: #ffe9de;
+  --black: #152233;
+  --grey: #627c93;
+  --grey-med: #e6eaee;
+  --grey-light: #f4f9fe;
+  --blue-dark: #094171;
+  --brown: #89380f;
+  --header-height: 110px;
+  --footer-height: 80px;
+}
+
+* {
+  font-family: 'Nunito Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.container {
+  width: 1024px;
   margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  height: 100%;
 }
 
 a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+button {
+  cursor: pointer;
 }
