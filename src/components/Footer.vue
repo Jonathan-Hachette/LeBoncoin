@@ -11,11 +11,11 @@
 
 <style scoped>
 footer {
-  background-color: var(--grey-light);
   height: var(--footer-height);
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--grey-light);
 }
 
 a {

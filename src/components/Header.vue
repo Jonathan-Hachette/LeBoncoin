@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import BtnPublish from './BtnPublish.vue'
 </script>
 
@@ -7,7 +8,9 @@ import BtnPublish from './BtnPublish.vue'
     <div class="container">
       <div class="topPart">
         <div>
-          <img src="../assets/imgs/logo.svg" alt="Logo leboncoin" />
+          <RouterLink :to="{ name: 'home' }"
+            ><img src="../assets/imgs/logo.svg" alt="Logo leboncoin" />
+          </RouterLink>
         </div>
 
         <div class="PublishAndInput">

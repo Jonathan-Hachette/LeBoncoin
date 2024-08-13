@@ -10,11 +10,25 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import { faHeart, faPlusSquare, faUser } from '@fortawesome/free-regular-svg-icons'
-import { faCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faHeart, faPlusSquare, faUser } from '@fortawesome/free-regular-svg-icons'
+import {
+  faCheckDouble,
+  faCircle,
+  faMapMarkerAlt,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add(faCircle, faPlusSquare, faUser, faSearch, faHeart)
+library.add(
+  faCircle,
+  faPlusSquare,
+  faUser,
+  faSearch,
+  faHeart,
+  faCheckDouble,
+  faClock,
+  faMapMarkerAlt
+)
 
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon)
 

@@ -11,9 +11,12 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/offer',
+      // Cette route contient un params'id'
+      path: '/offer/:id',
       name: 'offer',
-      component: OfferView
+      component: OfferView,
+      // La params sera reçu en props par le composant
+      props: true
     }
   ]
 })
