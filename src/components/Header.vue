@@ -61,9 +61,12 @@ import BtnPublish from './BtnPublish.vue'
 <style scoped>
 header {
   height: var(--header-height);
-  margin-bottom: 50px;
   border-bottom: 1px solid var(--grey);
-  position: sticky;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
 }
 
 .container {

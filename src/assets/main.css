@@ -14,8 +14,16 @@
 }
 
 * {
-  font-family: 'Nunito Sans', sans-serif;
   box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+main {
+  height: calc(100dvh - var(--footer-height) - var(--header-height));
+  margin-top: calc(var(--header-height) + 45px);
 }
 
 a {
