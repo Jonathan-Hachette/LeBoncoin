@@ -1,182 +1,201 @@
 <script setup>
 import formatDate from '@/assets/utils/formatDate'
+import formatPrice from '@/assets/utils/formatPrice'
+import { useCycleList } from '@vueuse/core'
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
-//Valeur reactive qui recevra les infos de l'offre une fois la requête terminée
-const offerInfos = ref({})
-
-//Définition de la props 'id' required
 const props = defineProps({
-  id: { required: true }
+  id: {
+    required: true
+  }
 })
 
-//Requête au montage du composant
+const offerInfos = ref({})
+
+// 'offerInfos' est un objet vide dans un premier temps, puis il reçoit sa nouvelle valeur. On utilise 'computed' pour détecter ce changement et déclencher 'useCycleList' avec la bonne valeur
+const cyclelist = computed(() => {
+  if (offerInfos.value.attributes.pictures.data) {
+    const { state, next, prev } = useCycleList(offerInfos.value.attributes.pictures.data)
+
+    return { state, next, prev }
+  } else {
+    return {}
+  }
+})
 
 onMounted(async () => {
   try {
-    // Requête pour récupérer les infos de l'offre
+    //  Destruction de la clé 'data'. Pour rappel, les données reçus d'une requête faite avec axios se trouve toujours à la clé 'data'
     const { data } = await axios.get(
-      `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers/${props.id}?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar`
+      `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
     )
 
-    //Vérification des infos
-    console.log('Data >>>>>', data)
+    // Pour vérifer les informations reçues
+    console.log('OfferView - data >>>', data.data)
 
-    // Transmission des informations a la ref 'offerInfos'
     offerInfos.value = data.data
   } catch (error) {
-    console.log('Catch >>>', error)
+    // Affiche l'erreur dans la console du navigateur
+    console.log('OfferView - catch >>>', error)
   }
 })
 </script>
 
 <template>
-  <p v-if="offerInfos.length === 0">Chargement en cours ...</p>
+  <div class="container">
+    <!-- Affichage du loader tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
+    <p v-if="!offerInfos.id">Chargement en cours ...</p>
 
-  <div class="offerDisplay container" v-else>
-    <div class="offerBloc">
-      <img :src="offerInfos.attributes?.pictures.data[0].attributes.url" alt="" />
-      <h1>{{ offerInfos.attributes?.title }}</h1>
-      <p>{{ offerInfos.attributes?.price }} €</p>
-      <p class="date">{{ formatDate(offerInfos.attributes?.createdAt) }}</p>
-
-      <h2 class="descriptionTitle">Description</h2>
-      <p>{{ offerInfos.attributes?.description }}</p>
-
-      <p class="city">
-        <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
-        Agon-Coutainville (50230)
-      </p>
-    </div>
-
-    <div class="ownerBloc">
-      <div class="topPart">
-        <div class="owner">
-          <img
-            :src="offerInfos.attributes?.owner.data.attributes?.avatar?.data?.attributes.url"
-            alt=""
+    <div v-else class="offerBloc">
+      <div class="firstCol">
+        <div>
+          <!-- Icône qui déclenche la fonction 'prev' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
+          <font-awesome-icon
+            :icon="['fas', 'angle-left']"
+            @click="cyclelist.prev()"
+            v-if="offerInfos.attributes.pictures.data?.length > 1"
           />
-          <p>{{ offerInfos.attributes?.owner.data.attributes.username }}</p>
+
+          <img
+            :src="cyclelist.state.value.attributes.url"
+            :alt="offerInfos.attributes.title"
+            v-if="cyclelist.state"
+          />
+
+          <!-- Icône qui déclenche la fonction 'next' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
+          <font-awesome-icon
+            :icon="['fas', 'angle-right']"
+            @click="cyclelist.next()"
+            v-if="offerInfos.attributes.pictures.data?.length > 1"
+          />
         </div>
 
-        <span>
-          <font-awesome-icon :icon="['fas', 'check-double']" />
-          Pièce d'identité vérifiée
-        </span>
-        <p>
-          <font-awesome-icon :icon="['far', 'clock']" />
-          Répond généralement en 1 heure
+        <h1>{{ offerInfos.attributes.title }}</h1>
+
+        <p>{{ formatPrice(offerInfos.attributes.price) }} €</p>
+
+        <p class="date">{{ formatDate(offerInfos.attributes.createdAt) }}</p>
+
+        <h2>Description</h2>
+        <p>{{ offerInfos.attributes.description }}</p>
+
+        <p class="city">
+          <font-awesome-icon :icon="['fas', 'map-marker-alt']" /> Agon-Coutainville (50230)
         </p>
       </div>
-      <div class="botPart">
-        <button>Acheter</button>
-        <button>Message</button>
+
+      <div class="secondCol">
+        <div class="owner">
+          <div>
+            <img
+              :src="offerInfos.attributes.owner.data.attributes.avatar.data.attributes.url"
+              :alt="offerInfos.attributes.owner.data.attributes.username"
+            />
+            <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
+          </div>
+
+          <p class="identity">
+            <font-awesome-icon :icon="['fas', 'check-double']" /> Pièce d’identité vérifiée
+          </p>
+          <p><font-awesome-icon :icon="['far', 'clock']" /> Répond généralement en 1 heure</p>
+        </div>
+
+        <div>
+          <button>Acheter</button>
+          <button>Message</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Géneral */
-
 .container {
-  padding: 10px 20px 20px;
+  padding: 30px 0;
 }
 
+.offerBloc {
+  display: flex;
+  gap: 20px;
+}
+/* -- FIRST COLUMN ---------------- */
+.firstCol {
+  width: 67%;
+}
 h1 {
   font-size: 24px;
   font-weight: bold;
   margin: 30px 0;
 }
-
-h2 {
-  border-top: 1px solid var(--grey-med);
+h1 + p {
   font-size: 18px;
   font-weight: bold;
-  margin: 50px 0px 25px;
-  padding-top: 20px;
 }
-
 .date {
   font-size: 12px;
   color: var(--grey);
   margin-top: 20px;
 }
-
-/* OFFER DISPLAY */
-.offerDisplay {
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-}
-
-/* OFFER BLOC */
-
-.offerBloc {
-  display: flex;
-  flex-direction: column;
-  width: 67%;
-}
-
-.offerBloc img {
-  width: 100%;
-  object-fit: contain;
-  height: 350px;
-}
-
-.offerBloc p:first-of-type {
+h2 {
+  border-top: 1px solid var(--grey-med);
   font-size: 18px;
+  border-width: bold;
+  margin: 50px 0 25px 0;
+  padding-top: 20px;
   font-weight: bold;
 }
-
-.city {
-  border-top: 1px solid var(--grey-med);
-  margin: 50px 0px 25px;
-  padding-top: 20px;
+.firstCol img {
+  width: 100%;
+  height: 350px;
+  object-fit: contain;
 }
-
-/* OWNER BLOC */
-
-/* Top */
-.ownerBloc {
-  display: flex;
-  flex-direction: column;
+.firstCol > div {
+  position: relative;
+}
+.firstCol > div svg {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+}
+.firstCol svg:first-child {
+  left: 10px;
+}
+.firstCol svg:last-child {
+  right: 10px;
+}
+/* -- SECOND COLUMN ---------------- */
+.secondCol {
   width: 33%;
   height: 375px;
   box-shadow: 0 0 5px var(--grey-med);
-  padding: 20px;
   border-radius: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
-
-.ownerBloc p {
-  font-size: 14px;
+.secondCol img {
+  height: 65px;
+  width: 65px;
+  border-radius: 50%;
+  object-fit: cover;
 }
-
-.topPart {
+.owner {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
-.owner img {
-  border-radius: 50%;
-  width: 60px;
-}
-
-.owner {
+.owner > div {
   display: flex;
-  gap: 20px;
+  gap: 15px;
 }
-
-.owner p {
-  font-size: 18px;
+.owner > div p {
   font-weight: bold;
   text-transform: uppercase;
+  font-size: 18px;
 }
-
-span {
+.identity {
   font-size: 12px;
   color: var(--brown);
   background-color: var(--orange-pale);
@@ -184,35 +203,36 @@ span {
   padding: 4px 7px;
   align-self: flex-start;
 }
-
-svg {
-  margin-right: 5px;
+.identity + p {
+  font-size: 14px;
 }
-
-/* Bottom */
-
-.botPart {
+.city {
+  border-top: 1px solid var(--grey-med);
+  margin: 50px 0 25px 0;
+  padding-top: 20px;
+}
+svg {
+  margin-right: 3px;
+}
+.secondCol > div:last-child {
+  margin-top: 15px;
+  padding: 15px 0;
+  border-top: 1px solid var(--grey-med);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-top: 1px solid var(--grey-med);
-  padding: 15px 0px;
 }
-
-.botPart button {
+button {
   border: none;
-  color: rgb(255, 255, 255);
+  color: white;
   padding: 15px;
   border-radius: 15px;
-  font-weight: 700;
-  font-size: inherit;
+  font-weight: bold;
 }
-
-.botPart button:nth-child(1) {
+button:first-child {
   background-color: var(--orange);
 }
-
-.botPart button:nth-child(2) {
+button:last-child {
   background-color: var(--blue-dark);
 }
 </style>

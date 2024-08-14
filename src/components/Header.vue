@@ -1,6 +1,9 @@
 <script setup>
+import { inject } from 'vue'
 import { RouterLink } from 'vue-router'
 import BtnPublish from './BtnPublish.vue'
+
+const GlobalStore = inject('GlobalStore')
 </script>
 
 <template>
@@ -21,10 +24,17 @@ import BtnPublish from './BtnPublish.vue'
           </form>
         </div>
 
-        <div class="connection">
+        <RouterLink :to="{ name: 'login' }" class="connection" v-if="!GlobalStore.userToken.value">
           <font-awesome-icon :icon="['far', 'user']" />
           se connecter
-        </div>
+        </RouterLink>
+
+        <font-awesome-icon
+          class="signoutIcon"
+          :icon="['fas', 'sign-out-alt']"
+          v-else
+          @click="GlobalStore.changeToken('')"
+        />
       </div>
 
       <div class="botPart">
@@ -70,6 +80,7 @@ header {
   left: 0;
   width: 100%;
   background-color: white;
+  z-index: 5;
 }
 
 .container {
@@ -85,10 +96,17 @@ header {
 .topPart {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .topPart img {
   width: 150px;
+}
+
+.signoutIcon {
+  cursor: pointer;
+  color: var(--grey);
+  font-size: 16px;
 }
 
 /* MIDDLE BLOC */
