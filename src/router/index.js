@@ -1,8 +1,8 @@
+import LoginView from '@/views/LoginView.vue'
 import OfferView from '@/views/OfferView.vue'
+import SignupView from '@/views/SignupView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import SignupView from '@/views/SignupView.vue'
-import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +13,8 @@ const router = createRouter({
       component: HomeView,
       props: (route) => {
         return {
+          page: parseInt(route.query.page) || 1,
+          title: route.query.title || '',
           sort: route.query.sort || '',
           pricemin: Number(route.query.pricemin) || '',
           pricemax: Number(route.query.pricemax) || ''
@@ -37,7 +39,10 @@ const router = createRouter({
       name: 'login',
       component: LoginView
     }
-  ]
+  ],
+  scrollBehavior() {
+    return { top: 0, left: 0 }
+  }
 })
 
 export default router

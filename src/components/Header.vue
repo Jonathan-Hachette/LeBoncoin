@@ -1,13 +1,34 @@
 <script setup>
-import { inject } from 'vue'
-import { RouterLink } from 'vue-router'
+import { inject, ref } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import BtnPublish from './BtnPublish.vue'
+
+const route = useRoute()
+
+const router = useRouter()
+
+const search = ref('')
 
 const GlobalStore = inject('GlobalStore')
 
 const disconnectUser = () => {
   GlobalStore.changeUserInfos(null)
   $cookies.remove('userInfos')
+}
+
+const handleSubmit = () => {
+  console.log('handleSubmit>>>', search.value, route.query)
+
+  const queries = { ...route.query }
+  if (search.value) {
+    queries.title = search.value
+  } else {
+    delete queries.title
+  }
+
+  queries.page = 1
+
+  router.push({ name: 'home', query: queries })
 }
 </script>
 
@@ -23,9 +44,11 @@ const disconnectUser = () => {
 
         <div class="PublishAndInput">
           <BtnPublish />
-          <form>
-            <input type="text" placeholder="Rechercher sur leboncoin" />
-            <button><font-awesome-icon :icon="['fas', 'search']" /></button>
+          <form @submit.prevent="handleSubmit">
+            <input type="text" placeholder="Rechercher sur leboncoin" v-model="search" />
+            <button>
+              <font-awesome-icon :icon="['fas', 'search']" />
+            </button>
           </form>
         </div>
 

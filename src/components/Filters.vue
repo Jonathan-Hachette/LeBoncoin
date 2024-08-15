@@ -2,8 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const props = defineProps(['sort', 'pricemin', 'pricemax'])
-console.log('props>>>>', props)
+const props = defineProps(['sort', 'pricemin', 'pricemax', 'title', 'page'])
 
 const priceMin = ref(props.pricemin)
 const priceMax = ref(props.pricemax)
@@ -32,9 +31,12 @@ const handleSubmit = () => {
     delete queries.sort
   }
 
-  //Penser à mettre la page à 1
+  queries.page = 1
 
-  router.push({ name: 'home', query: queries })
+  router.push({
+    name: 'home',
+    query: queries
+  })
 }
 </script>
 

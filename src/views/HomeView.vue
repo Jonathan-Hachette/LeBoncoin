@@ -2,12 +2,14 @@
 import BtnPublish from '@/components/BtnPublish.vue'
 import Filters from '@/components/Filters.vue'
 import OfferCard from '@/components/OfferCard.vue'
+import Pagination from '@/components/Pagination.vue'
 import axios from 'axios'
 import { onMounted, ref, watchEffect } from 'vue'
 
-const props = defineProps(['sort', 'pricemin', 'pricemax'])
+const props = defineProps(['sort', 'pricemin', 'pricemax', 'title', 'page'])
 
 const offersList = ref([])
+const numOfPages = ref(1)
 
 onMounted(() => {
   watchEffect(async () => {
@@ -23,13 +25,14 @@ onMounted(() => {
       }
 
       const { data } = await axios.get(
-        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar${priceFilters}&sort=${props.sort}`
+        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar${priceFilters}&sort=${props.sort}&filters[title][$containsi]=${props.title}&pagination[page]=${props.page}&pagination[pageSize]=10`
       )
       // Verification des données
       console.log('Data >>>>', data)
 
       // Transmition des données dans la ref 'offersList'
       offersList.value = data.data
+      numOfPages.value = data.meta.pagination.pageCount
     } catch (error) {
       console.log(error)
     }
@@ -42,7 +45,7 @@ onMounted(() => {
     <p v-if="offersList.length === 0" class="container loading">Chargement en cours</p>
 
     <section class="container" v-else>
-      <Filters :sort="sort" :pricemax="pricemax" :pricemin="pricemin" />
+      <Filters :sort="sort" :pricemax="pricemax" :pricemin="pricemin" :title="title" :page="page" />
 
       <p class="topLine">
         Des millions de petites annonces et autant d'occassions de se faire plaisir
@@ -65,6 +68,14 @@ onMounted(() => {
           :id="offer.id"
         />
       </div>
+      <Pagination
+        :sort="sort"
+        :pricemax="pricemax"
+        :pricemin="pricemin"
+        :title="title"
+        :page="page"
+        :numOfPages="numOfPages"
+      />
     </section>
   </main>
 </template>
