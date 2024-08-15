@@ -12,6 +12,7 @@ const GlobalStore = inject('GlobalStore')
 
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const displayPassword = ref('false')
 
 const handleSubmit = async () => {
   // console.log('submit ==>', {
@@ -34,8 +35,10 @@ const handleSubmit = async () => {
       // Visualisation des données
       console.log('Response>>>>', data)
 
-      //Appel de la fonction changeToken définie dans main.js
-      GlobalStore.changeToken(data.jwt)
+      //Appel de la fonction changeUserInfos définie dans main.js
+      GlobalStore.changeUserInfos({ username: data.user.username, token: data.jwt })
+
+      $cookies.set('userInfos', { username: data.user.username, token: data.jwt })
 
       //Navigation vers la page home
       router.push({ name: 'home' })
@@ -72,7 +75,26 @@ const clearErrorMessage = () => {
 
         <div>
           <label for="password" id="password">Mot de passe <span>*</span></label>
-          <input type="password" v-model="password" @input="clearErrorMessage" />
+
+          <div class="passwordInput">
+            <input
+              :type="displayPassword ? 'text' : 'password'"
+              v-model="password"
+              @input="clearErrorMessage"
+            />
+            <div>
+              <font-awesome-icon
+                :icon="['far', 'eye-slash']"
+                v-if="!displayPassword"
+                @click="displayPassword = !displayPassword"
+              />
+              <font-awesome-icon
+                :icon="['far', 'eye']"
+                @click="displayPassword = !displayPassword"
+                v-else
+              />
+            </div>
+          </div>
         </div>
 
         <p v-if="isSubmitting">Connexion en cours ...</p>
@@ -151,7 +173,7 @@ form {
   justify-content: space-between;
 }
 
-form div {
+form > div {
   display: flex;
   flex-direction: column;
 }
@@ -181,5 +203,26 @@ button {
 
 button svg {
   font-size: 14px;
+}
+
+.passwordInput {
+  display: flex;
+}
+
+.passwordInput input {
+  flex: 1;
+  border-radius: 15px 0 0 15px;
+}
+
+.passwordInput > div {
+  border: 1px solid var(--grey);
+  display: flex;
+  align-items: center;
+  border-left: none;
+  color: var(--grey);
+  height: 45px;
+  border-radius: 0 15px 15px 0;
+  width: 40px;
+  padding: 10px;
 }
 </style>

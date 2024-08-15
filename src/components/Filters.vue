@@ -1,0 +1,146 @@
+<script setup></script>
+
+<template>
+  <form>
+    <div class="filtersBloc">
+      <div class="pricePart">
+        <p>Prix</p>
+
+        <div>
+          <div>
+            <input type="number" name="priceMin" id="priceMin" placeholder="Minimum" />
+            <label for="priceMin">€</label>
+          </div>
+
+          <div>
+            <input type="number" name="priceMax" id="priceMax" placeholder="Maximum" />
+            <label for="priceMax">€</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="sortPart">
+        <p>Tri</p>
+
+        <div>
+          <label for="priceAsc">
+            <span>Prix croissants</span>
+            <input type="radio" name="priceAsc" id="priceAsc" />
+          </label>
+
+          <label for="priceDsc">
+            <span>Prix décroissants</span>
+            <input type="radio" name="priceDsc" id="priceDsc" />
+          </label>
+
+          <label for="noSort">
+            <span>Pas de tri</span>
+            <input type="radio" name="noSort" id="noSort" />
+          </label>
+        </div>
+      </div>
+    </div>
+    <button>Rechercher</button>
+  </form>
+</template>
+
+<style scoped>
+/* FORM */
+
+form {
+  display: flex;
+  gap: 50px;
+  justify-content: space-between;
+  padding-top: 40px;
+  margin-bottom: 40px;
+}
+
+form > div {
+  display: flex;
+  gap: 40px;
+}
+
+.filtersBloc {
+  display: flex;
+}
+
+p {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+button {
+  align-self: center;
+  background-color: var(--orange);
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Price Part */
+.pricePart div {
+  display: flex;
+}
+
+.pricePart > div {
+  display: flex;
+  gap: 15px;
+}
+
+.pricePart input {
+  height: 43px;
+  width: 150px;
+  border: 1px solid var(--grey-med);
+  border-radius: 15px 0 0 15px;
+  outline: none;
+  appearance: none;
+  padding-left: 10px;
+}
+
+.pricePart label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 43px;
+  width: 45px;
+  border: 1px solid var(--grey-med);
+  border-radius: 0px 15px 15px 0px;
+  border-left: none;
+}
+
+/* Sort Part */
+.sortPart {
+  display: flex;
+  flex-direction: column;
+}
+
+.sortPart > div {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.sortPart label {
+  margin-right: 15px;
+}
+
+/* Input appearance  */
+/* Masquer les flèches d'incrémentation sur Chrome, Safari, Edge, et Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Masquer les flèches d'incrémentation sur Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']::placeholder {
+  font-size: 16px;
+}
+</style>

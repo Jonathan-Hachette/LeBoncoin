@@ -7,9 +7,7 @@ import Header from './components/Header.vue'
 <template>
   <Header />
 
-  <main>
-    <RouterView />
-  </main>
+  <RouterView />
 
   <Footer />
 </template>

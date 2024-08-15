@@ -1,11 +1,14 @@
 <script setup>
 import BtnPublish from '@/components/BtnPublish.vue'
+import Filters from '@/components/Filters.vue'
 import OfferCard from '@/components/OfferCard.vue'
 </script>
 
 <template>
   <main>
     <section class="container">
+      <Filters />
+
       <p class="topLine">
         Des millions de petites annonces et autant d'occassions de se faire plaisir
       </p>

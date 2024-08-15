@@ -4,6 +4,11 @@ import { RouterLink } from 'vue-router'
 import BtnPublish from './BtnPublish.vue'
 
 const GlobalStore = inject('GlobalStore')
+
+const disconnectUser = () => {
+  GlobalStore.changeUserInfos(null)
+  $cookies.remove('userInfos')
+}
 </script>
 
 <template>
@@ -24,17 +29,25 @@ const GlobalStore = inject('GlobalStore')
           </form>
         </div>
 
-        <RouterLink :to="{ name: 'login' }" class="connection" v-if="!GlobalStore.userToken.value">
-          <font-awesome-icon :icon="['far', 'user']" />
-          se connecter
-        </RouterLink>
+        <div class="connection">
+          <RouterLink :to="{ name: 'login' }" v-if="!GlobalStore.userInfos.value">
+            <font-awesome-icon :icon="['far', 'user']" />
+            <p>Se connecter</p>
+          </RouterLink>
 
-        <font-awesome-icon
-          class="signoutIcon"
-          :icon="['fas', 'sign-out-alt']"
-          v-else
-          @click="GlobalStore.changeToken('')"
-        />
+          <div v-else>
+            <div>
+              <font-awesome-icon :icon="['far', 'user']" />
+              <p>{{ GlobalStore.userInfos.value.username }}</p>
+            </div>
+
+            <font-awesome-icon
+              class="signoutIcon"
+              :icon="['fas', 'sign-out-alt']"
+              @click="disconnectUser"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="botPart">
@@ -96,11 +109,14 @@ header {
 .topPart {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .topPart img {
   width: 150px;
+}
+
+.topPart p {
+  font-size: 12px;
 }
 
 .signoutIcon {
@@ -113,14 +129,14 @@ header {
 
 .PublishAndInput {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
 }
 
 form {
   display: flex;
   background-color: var(--grey-light);
-  padding: 7px;
+  padding: 6px;
   border-radius: 10px;
   width: 300px;
 }
@@ -144,11 +160,25 @@ form {
 
 /* RIGHT BLOC */
 
-.connection {
+.connection > div {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.connection > div > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.connection a {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  gap: 5px;
 }
 
 /* BOTTOM PART */
@@ -161,5 +191,12 @@ form {
 
 .botPart svg {
   font-size: 3px;
+}
+
+/* Input appearance */
+
+input[type='text']::placeholder {
+  font-size: 16px;
+  color: var(--grey);
 }
 </style>

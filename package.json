@@ -19,6 +19,7 @@
     "@vueuse/core": "^10.11.1",
     "axios": "^1.7.3",
     "vue": "^3.4.29",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
