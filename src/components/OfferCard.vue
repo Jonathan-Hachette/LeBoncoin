@@ -1,48 +1,40 @@
 <script setup>
 import formatDate from '@/assets/utils/formatDate'
 import formattedPrice from '@/assets/utils/formatPrice'
-import axios from 'axios'
-import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-const offersList = ref([])
-
-onMounted(async () => {
-  try {
-    const { data } = await axios.get(
-      `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar`
-    )
-    // Verification des données
-    console.log('Data >>>>', data)
-
-    // Transmition des données dans la ref 'offersList'
-    offersList.value = data.data
-  } catch (error) {
-    console.log(error)
+const props = defineProps({
+  offerInfos: {
+    type: Object,
+    required: true
+  },
+  id: {
+    type: Number,
+    required: true
   }
 })
 </script>
 
 <template>
-  <RouterLink
-    class="offerCard"
-    :to="{ name: 'offer', params: { id: offer.id } }"
-    v-for="offer in offersList"
-    :key="offer.id"
-  >
+  <RouterLink class="offerCard" :to="{ name: 'offer', params: { id: id } }">
     <div class="firstPart">
       <div class="owner">
-        <img :src="offer.attributes.owner.data.attributes?.avatar?.data?.attributes.url" alt="" />
-        <p>{{ offer.attributes.owner.data.attributes.username }}</p>
+        <img :src="offerInfos.owner.data.attributes.avatar.data?.attributes.url" alt="" />
+        <p>{{ offerInfos.owner.data.attributes.username }}</p>
       </div>
 
-      <img class="productImg" :src="offer.attributes.pictures.data[0].attributes.url" alt="" />
-      <p>{{ offer.attributes.title }}</p>
-      <p>{{ formattedPrice(offer.attributes.price) }} €</p>
+      <img
+        class="productImg"
+        :src="offerInfos.pictures.data[0].attributes.url"
+        :alt="offerInfos.title"
+        alt=""
+      />
+      <p>{{ offerInfos.title }}</p>
+      <p>{{ formattedPrice(offerInfos.price) }} €</p>
     </div>
 
     <div class="secondPart">
-      <p class="date">{{ formatDate(offer.attributes.createdAt) }}</p>
+      <p class="date">{{ formatDate(offerInfos.createdAt) }}</p>
       <font-awesome-icon :icon="['far', 'heart']" />
     </div>
   </RouterLink>

@@ -2,12 +2,47 @@
 import BtnPublish from '@/components/BtnPublish.vue'
 import Filters from '@/components/Filters.vue'
 import OfferCard from '@/components/OfferCard.vue'
+import axios from 'axios'
+import { onMounted, ref, watchEffect } from 'vue'
+
+const props = defineProps(['sort', 'pricemin', 'pricemax'])
+
+const offersList = ref([])
+
+onMounted(() => {
+  watchEffect(async () => {
+    try {
+      let priceFilters = ''
+
+      if (props.pricemax) {
+        priceFilters += `&filters[price][$lte]=${props.pricemax}`
+      }
+
+      if (props.pricemin) {
+        priceFilters += `&filters[price][$gte]=${props.pricemin}`
+      }
+
+      const { data } = await axios.get(
+        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar${priceFilters}&sort=${props.sort}`
+      )
+      // Verification des données
+      console.log('Data >>>>', data)
+
+      // Transmition des données dans la ref 'offersList'
+      offersList.value = data.data
+    } catch (error) {
+      console.log(error)
+    }
+  })
+})
 </script>
 
 <template>
   <main>
-    <section class="container">
-      <Filters />
+    <p v-if="offersList.length === 0" class="container loading">Chargement en cours</p>
+
+    <section class="container" v-else>
+      <Filters :sort="sort" :pricemax="pricemax" :pricemin="pricemin" />
 
       <p class="topLine">
         Des millions de petites annonces et autant d'occassions de se faire plaisir
@@ -23,7 +58,12 @@ import OfferCard from '@/components/OfferCard.vue'
       </div>
 
       <div class="offersBloc">
-        <OfferCard />
+        <OfferCard
+          v-for="offer in offersList"
+          :key="offer.id"
+          :offerInfos="offer.attributes"
+          :id="offer.id"
+        />
       </div>
     </section>
   </main>
@@ -70,6 +110,13 @@ import OfferCard from '@/components/OfferCard.vue'
 
 .sellBloc img:last-child {
   border-radius: 0 15px 15px 0;
+}
+
+.loading {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 60px;
 }
 
 /* MEDIA */

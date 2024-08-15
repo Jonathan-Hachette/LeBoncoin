@@ -1,19 +1,71 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const props = defineProps(['sort', 'pricemin', 'pricemax'])
+console.log('props>>>>', props)
+
+const priceMin = ref(props.pricemin)
+const priceMax = ref(props.pricemax)
+const sort = ref(props.sort)
+
+const router = useRouter()
+
+const handleSubmit = () => {
+  const queries = { ...props }
+
+  if (priceMin.value) {
+    queries.pricemin = priceMin.value
+  } else {
+    delete queries.pricemin
+  }
+
+  if (priceMax.value) {
+    queries.pricemax = priceMax.value
+  } else {
+    delete queries.pricemax
+  }
+
+  if (sort.value) {
+    queries.sort = sort.value
+  } else {
+    delete queries.sort
+  }
+
+  //Penser à mettre la page à 1
+
+  router.push({ name: 'home', query: queries })
+}
+</script>
 
 <template>
-  <form>
+  <form @submit.prevent="handleSubmit">
     <div class="filtersBloc">
       <div class="pricePart">
         <p>Prix</p>
 
         <div>
           <div>
-            <input type="number" name="priceMin" id="priceMin" placeholder="Minimum" />
+            <input
+              type="number"
+              name="priceMin"
+              id="priceMin"
+              placeholder="Minimum"
+              min="0"
+              v-model="priceMin"
+            />
             <label for="priceMin">€</label>
           </div>
 
           <div>
-            <input type="number" name="priceMax" id="priceMax" placeholder="Maximum" />
+            <input
+              type="number"
+              name="priceMax"
+              id="priceMax"
+              :min="priceMin"
+              placeholder="Maximum"
+              v-model="priceMax"
+            />
             <label for="priceMax">€</label>
           </div>
         </div>
@@ -23,19 +75,19 @@
         <p>Tri</p>
 
         <div>
-          <label for="priceAsc">
+          <label>
             <span>Prix croissants</span>
-            <input type="radio" name="priceAsc" id="priceAsc" />
+            <input type="radio" id="priceAsc" value="price:asc" v-model="sort" />
           </label>
 
           <label for="priceDsc">
             <span>Prix décroissants</span>
-            <input type="radio" name="priceDsc" id="priceDsc" />
+            <input type="radio" id="priceDesc" value="price:dsc" v-model="sort" />
           </label>
 
           <label for="noSort">
             <span>Pas de tri</span>
-            <input type="radio" name="noSort" id="noSort" />
+            <input type="radio" id="noSort" value="" v-model="sort" />
           </label>
         </div>
       </div>
