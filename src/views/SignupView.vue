@@ -40,7 +40,14 @@ const handleSubmit = async () => {
       console.log('response>>>>', data)
 
       //Appel de la fonction changeToken du fichier main.js pour stocker le token utilistaeur
-      GlobalStore.changeUserInfos({ username: data.user.username, token: data.jwt })
+      GlobalStore.changeUserInfos({
+        username: data.user.username,
+        token: data.jwt,
+        id: data.user.id
+      })
+
+      //Enregistrement des infos dans un cookie
+      $cookies.set('userInfos', { username: data.user.username, token: data.jwt, id: data.user.id })
 
       // Redirection vers la page home
       router.push({ name: 'home' })

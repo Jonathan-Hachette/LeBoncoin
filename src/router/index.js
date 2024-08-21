@@ -1,6 +1,7 @@
 import LoginView from '@/views/LoginView.vue'
 import OfferView from '@/views/OfferView.vue'
 import SignupView from '@/views/SignupView.vue'
+import { inject } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -38,10 +39,26 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
+    },
+    ,
+    {
+      path: '/publish',
+      name: 'publish',
+      component: () => import('../views/PublishView.vue'),
+      meta: { requireAuth: true }
     }
   ],
   scrollBehavior() {
     return { top: 0, left: 0 }
+  }
+})
+
+router.beforeEach((to, from) => {
+  //Injection du GlobalStore pour récupérer l'objet userInfos contenant le token
+  const GlobalStore = inject('GlobalStore')
+
+  if (to.meta.requireAuth && !GlobalStore.userInfos.value?.token) {
+    return { name: 'login', query: { redirect: to.name } }
   }
 })
 

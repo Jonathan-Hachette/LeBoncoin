@@ -1,10 +1,12 @@
-<script setup></script>
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
 
 <template>
-  <a href="">
+  <RouterLink :to="{ name: 'publish' }">
     <font-awesome-icon :icon="['far', 'plus-square']" />
     Déposer une annonce
-  </a>
+  </RouterLink>
 </template>
 
 <style scoped>

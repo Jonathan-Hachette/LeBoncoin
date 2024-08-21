@@ -180,21 +180,4 @@ button {
 .sortPart label {
   margin-right: 15px;
 }
-
-/* Input appearance  */
-/* Masquer les flèches d'incrémentation sur Chrome, Safari, Edge, et Opera */
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Masquer les flèches d'incrémentation sur Firefox */
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-
-input[type='number']::placeholder {
-  font-size: 16px;
-}
 </style>

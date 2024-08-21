@@ -89,7 +89,7 @@ onMounted(async () => {
         <div class="owner">
           <div>
             <img
-              :src="offerInfos.attributes.owner.data.attributes.avatar.data.attributes.url"
+              :src="offerInfos.attributes.owner.data.attributes.avatar.data?.attributes?.url"
               :alt="offerInfos.attributes.owner.data.attributes.username"
             />
             <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>

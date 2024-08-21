@@ -36,9 +36,13 @@ const handleSubmit = async () => {
       console.log('Response>>>>', data)
 
       //Appel de la fonction changeUserInfos définie dans main.js
-      GlobalStore.changeUserInfos({ username: data.user.username, token: data.jwt })
+      GlobalStore.changeUserInfos({
+        username: data.user.username,
+        token: data.jwt,
+        id: data.user.id
+      })
 
-      $cookies.set('userInfos', { username: data.user.username, token: data.jwt })
+      $cookies.set('userInfos', { username: data.user.username, token: data.jwt, id: data.user.id })
 
       //Navigation vers la page home
       router.push({ name: 'home' })

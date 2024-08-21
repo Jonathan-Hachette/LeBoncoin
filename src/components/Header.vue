@@ -4,7 +4,6 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import BtnPublish from './BtnPublish.vue'
 
 const route = useRoute()
-
 const router = useRouter()
 
 const search = ref('')
