@@ -1,32 +1,44 @@
 <script setup>
 import { inject, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import BtnPublish from './BtnPublish.vue'
+
+import BtnPublishOffer from './BtnPublishOffer.vue'
+
+const GlobalStore = inject('GlobalStore')
 
 const route = useRoute()
 const router = useRouter()
 
-const search = ref('')
+const searchText = ref('')
 
-const GlobalStore = inject('GlobalStore')
-
-const disconnectUser = () => {
-  GlobalStore.changeUserInfos(null)
+const disconnection = () => {
+  // Suppression du cookie
   $cookies.remove('userInfos')
+
+  GlobalStore.changeUserInfos({
+    id: '',
+    username: '',
+    token: ''
+  })
+
+  router.replace({ name: 'home' })
 }
 
-const handleSubmit = () => {
-  console.log('handleSubmit>>>', search.value, route.query)
-
+const handleSearch = () => {
+  // Copie des query existantes pour pouvoir les modifier
   const queries = { ...route.query }
-  if (search.value) {
-    queries.title = search.value
+
+  // SI la valeur existe, elle est ajoutée aux query, SINON la clé est retirée des query
+  if (searchText.value) {
+    queries.title = searchText.value
   } else {
     delete queries.title
   }
 
+  // Pour toujours commencer à la première page de la recherche
   queries.page = 1
 
+  // On navigue vers la route actuelle avec les query mises à jour
   router.push({ name: 'home', query: queries })
 }
 </script>
@@ -34,73 +46,93 @@ const handleSubmit = () => {
 <template>
   <header>
     <div class="container">
-      <div class="topPart">
-        <div>
-          <RouterLink :to="{ name: 'home' }"
-            ><img src="../assets/imgs/logo.svg" alt="Logo leboncoin" />
-          </RouterLink>
-        </div>
+      <div class="topBloc">
+        <RouterLink :to="{ name: 'home' }">
+          <img src="../assets/img/logo.svg" alt="" />
+        </RouterLink>
 
-        <div class="PublishAndInput">
-          <BtnPublish />
-          <form @submit.prevent="handleSubmit">
-            <input type="text" placeholder="Rechercher sur leboncoin" v-model="search" />
+        <div class="middlePart">
+          <BtnPublishOffer />
+
+          <!-- Transformation de la 'div' en formulaire -->
+          <form @submit.prevent="handleSearch">
+            <input
+              type="text"
+              name="search"
+              id="search"
+              placeholder="Rechercher sur leboncoin"
+              v-model="searchText"
+            />
+
+            <!-- Ajout d'un bouton pour la soumission du formulaire -->
             <button>
               <font-awesome-icon :icon="['fas', 'search']" />
             </button>
           </form>
         </div>
 
-        <div class="connection">
-          <RouterLink :to="{ name: 'login' }" v-if="!GlobalStore.userInfos.value">
-            <font-awesome-icon :icon="['far', 'user']" />
-            <p>Se connecter</p>
-          </RouterLink>
-
-          <div v-else>
-            <div>
+        <div class="rightPart">
+          <div v-if="GlobalStore.userInfos.value.username">
+            <div class="connection">
               <font-awesome-icon :icon="['far', 'user']" />
               <p>{{ GlobalStore.userInfos.value.username }}</p>
             </div>
 
-            <font-awesome-icon
-              class="signoutIcon"
-              :icon="['fas', 'sign-out-alt']"
-              @click="disconnectUser"
-            />
+            <div>
+              <font-awesome-icon
+                :icon="['fas', 'sign-out-alt']"
+                @click="disconnection"
+                class="disconnection"
+              />
+            </div>
           </div>
+
+          <RouterLink :to="{ name: 'login' }" class="connection" v-else>
+            <font-awesome-icon :icon="['far', 'user']" />
+
+            <p>Se connecter</p>
+          </RouterLink>
         </div>
       </div>
 
-      <div class="botPart">
-        <a href="">Immobilier</a>
+      <div class="bottomBloc">
+        <span>Immobilier</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Véhicules</a>
+        <span>Véhicules</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Locations de vacances</a>
+        <span>Locations de vacances</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Emploi</a>
+        <span>Emploi</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Mode</a>
+        <span>Mode</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Maison & Jardin</a>
+        <span>Maison & Jardin</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Famille</a>
+        <span>Famille</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Electronique</a>
+        <span>Electronique</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Loisirs</a>
+        <span>Loisirs</span>
+
         <font-awesome-icon :icon="['fas', 'circle']" />
 
-        <a href="">Autres</a>
+        <span>Autres</span>
       </div>
     </div>
   </header>
@@ -108,117 +140,96 @@ const handleSubmit = () => {
 
 <style scoped>
 header {
-  height: var(--header-height);
   border-bottom: 1px solid var(--grey);
   position: fixed;
   top: 0;
-  left: 0;
   width: 100%;
-  background-color: white;
+  background-color: #fff;
   z-index: 5;
+  height: var(--header-height);
 }
-
 .container {
-  padding: 10px 0 20px;
+  padding: 10px 0 20px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
-/* TOP PART */
-
-/* LEFT BLOC */
-.topPart {
+img {
+  width: 140px;
+}
+/* -- TOP BLOC ---------------- */
+.topBloc {
   display: flex;
   justify-content: space-between;
 }
-
-.topPart img {
-  width: 150px;
-}
-
-.topPart p {
+.topBloc p {
   font-size: 12px;
 }
-
-.signoutIcon {
-  cursor: pointer;
-  color: var(--grey);
-  font-size: 16px;
-}
-
-/* MIDDLE BLOC */
-
-.PublishAndInput {
+.middlePart {
   display: flex;
-  gap: 20px;
   align-items: center;
+  gap: 20px;
 }
-
 form {
   display: flex;
   background-color: var(--grey-light);
-  padding: 6px;
+  padding: 7px;
   border-radius: 10px;
   width: 300px;
 }
 
-.PublishAndInput input {
+.middlePart input {
   background-color: inherit;
   border: none;
   flex: 1;
   outline: none;
 }
-
-.PublishAndInput button {
+.middlePart svg {
+  background-color: var(--orange);
+  padding: 8px;
+  box-sizing: content-box;
+  border-radius: 7px;
+}
+.middlePart input::placeholder {
+  color: var(--grey);
+  font-size: 16px;
+}
+form button {
   display: flex;
   align-items: center;
   border: none;
-  background-color: var(--orange);
-  border-radius: 10px;
-  padding: 8px;
-  cursor: pointer;
+  background-color: #ffffff00;
+  padding: 0;
 }
-
-/* RIGHT BLOC */
-
-.connection > div {
+.rightPart > div {
   display: flex;
   align-items: center;
   gap: 30px;
-}
-
-.connection > div > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.connection a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  gap: 5px;
-}
-
-/* BOTTOM PART */
-
-.botPart {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.botPart svg {
-  font-size: 3px;
-}
-
-/* Input appearance */
-
-input[type='text']::placeholder {
+  height: 100%;
   font-size: 16px;
+}
+.disconnection {
+  cursor: pointer;
   color: var(--grey);
+}
+.connection {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: none;
+  background-color: #ffffff00;
+}
+/* -- BOTTOM BLOC ---------------- */
+.bottomBloc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.bottomBloc svg {
+  color: var(--black);
+  font-size: 2px;
 }
 </style>

@@ -5,21 +5,21 @@ import { RouterLink } from 'vue-router'
 <template>
   <RouterLink :to="{ name: 'publish' }">
     <font-awesome-icon :icon="['far', 'plus-square']" />
-    Déposer une annonce
+
+    <span>Déposer une annonce</span>
   </RouterLink>
 </template>
 
 <style scoped>
 a {
-  padding: 10px;
-  text-decoration: none;
   background-color: var(--orange);
-  border-radius: 10px;
   color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
   font-weight: bold;
 }
-
-a svg {
-  margin-right: 5px;
+span {
+  margin-left: 10px;
 }
 </style>

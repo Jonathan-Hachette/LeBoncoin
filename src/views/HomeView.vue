@@ -1,40 +1,39 @@
 <script setup>
-import BtnPublish from '@/components/BtnPublish.vue'
-import Filters from '@/components/Filters.vue'
-import OfferCard from '@/components/OfferCard.vue'
-import Pagination from '@/components/Pagination.vue'
 import axios from 'axios'
 import { onMounted, ref, watchEffect } from 'vue'
+import Filters from '../components/Filters.vue'
+import OfferCard from '../components/OfferCard.vue'
+import Pagination from '../components/Pagination.vue'
+import TimeToSell from '../components/TimeToSell.vue'
 
-const props = defineProps(['sort', 'pricemin', 'pricemax', 'title', 'page'])
+const props = defineProps(['page', 'title', 'sort', 'pricemax', 'pricemin'])
 
-const offersList = ref([])
-const numOfPages = ref(1)
+const offersList = ref({})
 
-onMounted(() => {
+onMounted(async () => {
   watchEffect(async () => {
     try {
-      let priceFilters = ''
+      // Les filtres des prix ne peuvent pas être sans valeur sinon la requête crash. Donc on créé une string vide qui stockera le filtre prix minimum et prix maximum seulement s'ils sont demandés
+      let pricefilters = ''
 
       if (props.pricemax) {
-        priceFilters += `&filters[price][$lte]=${props.pricemax}`
+        pricefilters += `&filters[price][$lte]=${props.pricemax}`
       }
-
       if (props.pricemin) {
-        priceFilters += `&filters[price][$gte]=${props.pricemin}`
+        pricefilters += `&filters[price][$gte]=${props.pricemin}`
       }
 
       const { data } = await axios.get(
-        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=owner&populate[1]=pictures&populate[2]=owner.avatar${priceFilters}&sort=${props.sort}&filters[title][$containsi]=${props.title}&pagination[page]=${props.page}&pagination[pageSize]=10`
+        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=pictures&populate[1]=owner.avatar&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
       )
-      // Verification des données
-      console.log('Data >>>>', data)
 
-      // Transmition des données dans la ref 'offersList'
-      offersList.value = data.data
-      numOfPages.value = data.meta.pagination.pageCount
+      // Pour vérifer les informations reçues
+      // console.log('HomeView - data >>>', data)
+
+      offersList.value = data
     } catch (error) {
-      console.log(error)
+      // Affiche l'erreur dans la console du navigateur
+      console.log('HomeView - catch >>>', error)
     }
   })
 })
@@ -42,112 +41,56 @@ onMounted(() => {
 
 <template>
   <main>
-    <p v-if="offersList.length === 0" class="container loading">Chargement en cours</p>
+    <div class="container">
+      <!-- Affichage du loaded tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
+      <p v-if="!offersList.data" class="loader">Chargement en cours ...</p>
 
-    <section class="container" v-else>
-      <Filters :sort="sort" :pricemax="pricemax" :pricemin="pricemin" :title="title" :page="page" />
+      <div v-else>
+        <Filters :sort="sort" :pricemax="pricemax" :pricemin="pricemin" />
 
-      <p class="topLine">
-        Des millions de petites annonces et autant d'occassions de se faire plaisir
-      </p>
+        <p class="topLine">
+          Des millions de petites annonces et autant d’occasions de se faire plaisir
+        </p>
 
-      <div class="sellBloc">
-        <img src="../assets/imgs/onde-corail.svg" alt="" />
-        <div>
-          <p>C'est le moment de vendre</p>
-          <BtnPublish />
+        <TimeToSell />
+
+        <div class="offersBloc">
+          <!-- Affichage de toutes les cartes -->
+          <OfferCard
+            v-for="offer in offersList.data"
+            :key="offer.id"
+            :offerInfos="offer.attributes"
+            :id="offer.id"
+          />
         </div>
-        <img src="../assets/imgs/feuille-bleue.svg" alt="" />
-      </div>
 
-      <div class="offersBloc">
-        <OfferCard
-          v-for="offer in offersList"
-          :key="offer.id"
-          :offerInfos="offer.attributes"
-          :id="offer.id"
-        />
+        <Pagination :pagination="offersList.meta.pagination" />
       </div>
-      <Pagination
-        :sort="sort"
-        :pricemax="pricemax"
-        :pricemin="pricemin"
-        :title="title"
-        :page="page"
-        :numOfPages="numOfPages"
-      />
-    </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding-bottom: 40px;
+}
+.loader {
+  font-size: 32px;
+  font-weight: bold;
+}
 .topLine {
   text-align: center;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 600;
   margin: 30px 0;
 }
-
 .offersBloc {
   display: flex;
   flex-wrap: wrap;
   gap: 40px 15px;
-}
-
-.sellBloc {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--orange-pale);
-  border-radius: 20px;
-  margin-bottom: 35px;
-}
-
-.sellBloc > div {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  font-weight: 700;
-}
-
-.sellBloc p {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.sellBloc img:first-child {
-  border-radius: 15px 0 0 15px;
-}
-
-.sellBloc img:last-child {
-  border-radius: 0 15px 15px 0;
-}
-
-.loading {
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-  padding-top: 60px;
-}
-
-/* MEDIA */
-
-@media (max-width: 1050px) {
-  .topLine {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 880px) {
-  .topLine {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 650px) {
-  .topLine {
-    font-size: 14px;
-    padding: 0 20px;
-  }
 }
 </style>

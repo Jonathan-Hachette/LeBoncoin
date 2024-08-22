@@ -1,77 +1,88 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
 const router = useRouter()
 
-const props = defineProps(['title', 'sort', 'pricemin', 'pricemax', 'page', 'numOfPages'])
+const props = defineProps(['pagination'])
 
 const changePage = (num) => {
-  const queries = { ...props }
-
-  delete queries.numOfPages
+  // Copie des query existantes pour pouvoir les modifier
+  const queries = { ...route.query }
 
   queries.page = num
+
+  // On navigue vers la route actuelle avec les query mises à jour
   router.push({ name: 'home', query: queries })
 }
 </script>
 
 <template>
-  <section>
+  <div class="pagination">
+    <!-- Affichage de l'icône "previous" actif à partir de la deuxième page-->
     <font-awesome-icon
       :icon="['fas', 'angle-left']"
-      @click="changePage(page - 1)"
-      v-if="page > 1"
+      @click="changePage(pagination.page - 1)"
+      v-if="pagination.page > 1"
     />
-    <font-awesome-icon :icon="['fas', 'angle-left']" class="disabled" v-else />
+    <!-- Affichage de l'icône "previous" inactif si c'est la première page -->
+    <font-awesome-icon :icon="['fas', 'angle-left']" class="disactivated" v-else />
 
     <div>
-      <p v-for="num in numOfPages" @click="changePage(num)" :class="{ selected: num === page }">
+      <p
+        v-for="num in pagination.pageCount"
+        :class="{
+          selected: num === pagination.page
+        }"
+        @click="changePage(num)"
+      >
         {{ num }}
       </p>
     </div>
+
+    <!-- Affichage de l'icône "next" actif jusqu'à l'avant dernière page-->
     <font-awesome-icon
       :icon="['fas', 'angle-right']"
-      @click="changePage(page + 1)"
-      v-if="page < numOfPages"
+      @click="changePage(pagination.page + 1)"
+      v-if="pagination.page < pagination.pageCount"
     />
-    <font-awesome-icon :icon="['fas', 'angle-right']" v-else class="disabled" />
-  </section>
+    <!-- Affichage de l'icône "next" inactif si c'est la dernière page -->
+    <font-awesome-icon :icon="['fas', 'angle-right']" class="disactivated" v-else />
+  </div>
 </template>
 
 <style scoped>
-section {
+div {
   display: flex;
+}
+.pagination {
+  gap: 25px;
+  width: 100%;
   justify-content: center;
   align-items: center;
   margin-top: 40px;
-  gap: 10px;
 }
-
-div {
-  display: flex;
-  justify-content: center;
+.pagination > div {
   align-items: center;
 }
-
-div svg {
-  cursor: pointer;
-}
-
-div p {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+p {
   width: 40px;
   height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.selected {
+  color: white;
+  background-color: var(--black);
   border-radius: 3px;
 }
-
-.selected {
-  background-color: var(--black);
-  color: white;
+svg {
+  cursor: pointer;
 }
-.disabled {
+.disactivated {
   color: var(--grey-med);
-  cursor: auto;
+  cursor: default;
 }
 </style>

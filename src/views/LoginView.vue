@@ -1,30 +1,23 @@
 <script setup>
-import axios from 'axios'
-import { inject, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { ref, inject } from 'vue'
+import axios from 'axios'
 
 const router = useRouter()
 
-const email = ref('')
-const password = ref('')
-
 const GlobalStore = inject('GlobalStore')
 
+const email = ref('')
+const password = ref('')
+const displayPassword = ref(false)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
-const displayPassword = ref('false')
 
 const handleSubmit = async () => {
-  // console.log('submit ==>', {
-  //   email: email.value,
-  //   password: password.value
-  // })
+  try {
+    isSubmitting.value = true
 
-  //Changement de valeur au déclenchement de la soumission
-  isSubmitting.value = true
-  if (email.value && password.value) {
-    try {
-      // Requête au back
+    if (email.value && password.value) {
       const { data } = await axios.post(
         'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local',
         {
@@ -32,130 +25,111 @@ const handleSubmit = async () => {
           password: password.value
         }
       )
-      // Visualisation des données
-      console.log('Response>>>>', data)
 
-      //Appel de la fonction changeUserInfos définie dans main.js
-      GlobalStore.changeUserInfos({
+      // console.log('LoginView - data>>', data)
+
+      // Création de l'objet qui sera stocké dans le fournisseur de dépendance et les cookies
+      const userInfos = {
+        id: data.user.id,
         username: data.user.username,
-        token: data.jwt,
-        id: data.user.id
-      })
+        token: data.jwt
+      }
 
-      $cookies.set('userInfos', { username: data.user.username, token: data.jwt, id: data.user.id })
+      GlobalStore.changeUserInfos(userInfos)
 
-      //Navigation vers la page home
+      $cookies.set('userInfos', userInfos)
+
       router.push({ name: 'home' })
-    } catch (error) {
-      console.log('error>>>', error)
-
-      errorMessage.value = 'Un problème est survenu, veuillez essaye à nouveau'
+    } else {
+      errorMessage.value = 'Veuillez remplir tous les champs'
     }
-  } else {
-    errorMessage.value = 'Veuillez remplir tous les champs'
+  } catch (error) {
+    console.log('LoginView - catch>>', error)
+    if (error.response) {
+      errorMessage.value = error.response.data.error.message
+    } else {
+      errorMessage.value = 'Un problème est survenu, veuillez essayer à nouveau'
+    }
   }
-  isSubmitting.value = false
-}
 
-const clearErrorMessage = () => {
-  if (errorMessage.value) {
-    errorMessage.value = ''
-  }
+  isSubmitting.value = false
 }
 </script>
 
 <template>
-  <div class="container">
-    <div>
+  <main>
+    <div class="container">
       <div>
-        <h1>Bonjour !</h1>
-        <h2>Connectez-vous pour découvrir toutes nos fonctionnalités</h2>
-      </div>
-      <form @submit.prevent="handleSubmit">
         <div>
-          <label for="email" id="email">E-mail <span>*</span></label>
-          <input type="text" v-model="email" @input="clearErrorMessage" />
+          <h2>Bonjour !</h2>
+
+          <h1>Connectez-vous pour découvrir toutes nos fonctionnalités.</h1>
         </div>
 
-        <div>
-          <label for="password" id="password">Mot de passe <span>*</span></label>
-
-          <div class="passwordInput">
+        <form @submit.prevent="handleSubmit">
+          <div>
+            <label for="email">E-mail <span>*</span></label>
             <input
-              :type="displayPassword ? 'text' : 'password'"
-              v-model="password"
-              @input="clearErrorMessage"
+              type="email"
+              name="email"
+              id="email"
+              v-model="email"
+              @input="() => (errorMessage = '')"
             />
-            <div>
-              <font-awesome-icon
-                :icon="['far', 'eye-slash']"
-                v-if="!displayPassword"
-                @click="displayPassword = !displayPassword"
+          </div>
+
+          <div>
+            <label for="password">Mot de passe <span>*</span></label>
+            <div class="passwordInput">
+              <input
+                :type="displayPassword ? 'text' : 'password'"
+                name="password"
+                id="password"
+                v-model="password"
+                @input="() => (errorMessage = '')"
               />
-              <font-awesome-icon
-                :icon="['far', 'eye']"
-                @click="displayPassword = !displayPassword"
-                v-else
-              />
+              <div>
+                <font-awesome-icon
+                  :icon="['far', 'eye']"
+                  v-if="displayPassword"
+                  @click="() => (displayPassword = !displayPassword)"
+                />
+                <font-awesome-icon
+                  :icon="['far', 'eye-slash']"
+                  v-else
+                  @click="() => (displayPassword = !displayPassword)"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <p v-if="isSubmitting">Connexion en cours ...</p>
+          <button type="button" v-if="isSubmitting">Connexion en cours ...</button>
+          <button v-else>Se connecter <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
 
-        <button v-else>
-          Se connecter
-          <font-awesome-icon :icon="['fas', 'arrow-right']" />
-        </button>
+          <p v-if="errorMessage">{{ errorMessage }}</p>
+        </form>
 
-        <p v-if="errorMessage">{{ errorMessage }}</p>
-      </form>
-      <p>
-        Envie de nous rejoindre ? <RouterLink :to="{ name: 'signup' }">Créer un compte</RouterLink>
-      </p>
+        <p>
+          Envie de nous rejoindre ?
+          <RouterLink :to="{ name: 'signup' }">Créer un compte</RouterLink>
+        </p>
+      </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
-/* GENERAL */
-
-a {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-h1 {
-  font-weight: bold;
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-h2 {
-  font-size: 16px;
-}
-
-span {
-  color: var(--grey);
-}
-
-p {
-  text-align: center;
-}
-
-/* CONTAINER */
-
 .container {
   height: calc(100vh - var(--header-height) - var(--footer-height));
-  background-image: url(../assets/imgs/illustration.png);
+  background-image: url('../assets/img/login-illustration.png');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: bottom;
   display: flex;
+  /* Le mot clé 'safe' permet à cette propriété de repasser automatiquement ) la valeur 'flex-start' si la hauteur devient insuffisante. Cela évitera à l'utilisateur de ne pas pouvoir scroller pour voir le haut et le bas du bloc.  */
   align-items: safe center;
   justify-content: center;
 }
-
 .container > div {
   box-shadow: 0 0 7px 1px var(--grey-med);
   background-color: #fff;
@@ -165,59 +139,41 @@ p {
   width: 480px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
-
-/* FORM */
-
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
 form {
-  display: flex;
   flex: 1;
-  margin: 30px 0;
+
+  margin: 40px 0;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
 form > div {
   display: flex;
   flex-direction: column;
 }
-
 label {
   margin-bottom: 7px;
 }
-
 input {
   border: 1px solid var(--grey);
-  border-radius: 15px;
   height: 45px;
+  border-radius: 15px;
   padding-left: 10px;
 }
-
-button {
-  border: none;
-  border-radius: 15px;
-  background-color: var(--orange);
-  color: white;
-  height: 45px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-}
-
-button svg {
-  font-size: 14px;
-}
-
 .passwordInput {
   display: flex;
 }
-
 .passwordInput input {
-  flex: 1;
   border-radius: 15px 0 0 15px;
+  flex: 1;
 }
-
 .passwordInput > div {
   border: 1px solid var(--grey);
   display: flex;
@@ -228,5 +184,33 @@ button svg {
   border-radius: 0 15px 15px 0;
   width: 40px;
   padding: 10px;
+}
+span {
+  color: var(--grey);
+}
+button {
+  background-color: var(--orange);
+  border: none;
+  border-radius: 15px;
+  height: 45px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+button > svg {
+  font-size: 14px;
+}
+form > p {
+  color: var(--orange);
+}
+p {
+  text-align: center;
+}
+a {
+  font-weight: bold;
+  text-decoration: underline;
 }
 </style>

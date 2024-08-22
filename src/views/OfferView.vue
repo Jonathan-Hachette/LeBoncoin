@@ -1,9 +1,9 @@
 <script setup>
-import formatDate from '@/assets/utils/formatDate'
-import formatPrice from '@/assets/utils/formatPrice'
+import { onMounted, ref, computed } from 'vue'
 import { useCycleList } from '@vueuse/core'
 import axios from 'axios'
-import { computed, onMounted, ref } from 'vue'
+
+import { formatPrice } from '../utils/formatPrice'
 
 const props = defineProps({
   id: {
@@ -15,13 +15,9 @@ const offerInfos = ref({})
 
 // 'offerInfos' est un objet vide dans un premier temps, puis il reçoit sa nouvelle valeur. On utilise 'computed' pour détecter ce changement et déclencher 'useCycleList' avec la bonne valeur
 const cyclelist = computed(() => {
-  if (offerInfos.value.attributes.pictures.data) {
-    const { state, next, prev } = useCycleList(offerInfos.value.attributes.pictures.data)
+  const { state, next, prev } = useCycleList(offerInfos.value.attributes.pictures.data)
 
-    return { state, next, prev }
-  } else {
-    return {}
-  }
+  return { state, next, prev }
 })
 
 onMounted(async () => {
@@ -40,78 +36,104 @@ onMounted(async () => {
     console.log('OfferView - catch >>>', error)
   }
 })
+
+// Pour afficher la date de création de l'offre au bon format
+const formatDate = computed(() => {
+  // -- Syntaxe qui chaîne toutes les méthodes
+  return offerInfos.value.attributes.updatedAt?.split('T')[0].split('-').reverse().join('/')
+  // -- Version non chaînée pour comprendre le déroulé
+  // const creationDateUTCFormat = offerInfos.value.attributes.updatedAt
+  // console.log('OfferCard - 1 - creationDateUTCFormat>>>', creationDateUTCFormat)
+  // const dateSimpleFormat = creationDateUTCFormat.split('T')[0]
+  // console.log('OfferCard - 2 - dateSimpleFormat>>>', dateSimpleFormat)
+  // const dateSimpleFormatArray = dateSimpleFormat.split('-')
+  // console.log('OfferCard - 3 - dateSimpleFormatArray>>>', dateSimpleFormatArray)
+  // const dateCorrectOrderArray = dateSimpleFormatArray.reverse()
+  // console.log('OfferCard - 4 - dateCorrectOrderArray>>>', dateCorrectOrderArray)
+  // const stringDate = dateCorrectOrderArray.join('/')
+  // console.log('OfferCard - 5 - stringDate>>>', stringDate)
+  // return stringDate
+})
+
+const formatedPrice = computed(() => {
+  const price = offerInfos.value.attributes.price
+
+  /*
+   On retourne la valeur de retour de la fonction nommée 'formatPrice' qui est déclarée dans le dossier 'utils'. Ainsi nous pouvons la réutiliser dans d'autres composants tels que 'OfferCard.vue'. Ceci est plus pratique, contrairement à la propriété calculée 'formatDate' que nous avons réécrite dans le composant 'OfferCard.vue'.
+   */
+  return formatPrice(price)
+})
 </script>
 
 <template>
-  <div class="container">
-    <!-- Affichage du loader tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
-    <p v-if="!offerInfos.id">Chargement en cours ...</p>
+  <main>
+    <div class="container">
+      <!-- Affichage du loader tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
+      <p v-if="!offerInfos.id">Chargement en cours ...</p>
 
-    <div v-else class="offerBloc">
-      <div class="firstCol">
-        <div>
-          <!-- Icône qui déclenche la fonction 'prev' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
-          <font-awesome-icon
-            :icon="['fas', 'angle-left']"
-            @click="cyclelist.prev()"
-            v-if="offerInfos.attributes.pictures.data?.length > 1"
-          />
-
-          <img
-            :src="cyclelist.state.value.attributes.url"
-            :alt="offerInfos.attributes.title"
-            v-if="cyclelist.state"
-          />
-
-          <!-- Icône qui déclenche la fonction 'next' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
-          <font-awesome-icon
-            :icon="['fas', 'angle-right']"
-            @click="cyclelist.next()"
-            v-if="offerInfos.attributes.pictures.data?.length > 1"
-          />
-        </div>
-
-        <h1>{{ offerInfos.attributes.title }}</h1>
-
-        <p>{{ formatPrice(offerInfos.attributes.price) }} €</p>
-
-        <p class="date">{{ formatDate(offerInfos.attributes.createdAt) }}</p>
-
-        <h2>Description</h2>
-        <p>{{ offerInfos.attributes.description }}</p>
-
-        <p class="city">
-          <font-awesome-icon :icon="['fas', 'map-marker-alt']" /> Agon-Coutainville (50230)
-        </p>
-      </div>
-
-      <div class="secondCol">
-        <div class="owner">
+      <div v-else class="offerBloc">
+        <div class="firstCol">
           <div>
-            <img
-              :src="offerInfos.attributes.owner.data.attributes.avatar.data?.attributes?.url"
-              :alt="offerInfos.attributes.owner.data.attributes.username"
+            <!-- Icône qui déclenche la fonction 'prev' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
+            <font-awesome-icon
+              :icon="['fas', 'angle-left']"
+              @click="cyclelist.prev()"
+              v-if="offerInfos.attributes.pictures.data?.length > 1"
             />
-            <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
+
+            <img :src="cyclelist.state.value.attributes.url" :alt="offerInfos.attributes.title" />
+
+            <!-- Icône qui déclenche la fonction 'next' de la méthode 'useCycleList' pour obtenir l'image précédente. Il s'affiche s'il y a plus d'une image -->
+            <font-awesome-icon
+              :icon="['fas', 'angle-right']"
+              @click="cyclelist.next()"
+              v-if="offerInfos.attributes.pictures.data?.length > 1"
+            />
           </div>
 
-          <p class="identity">
-            <font-awesome-icon :icon="['fas', 'check-double']" /> Pièce d’identité vérifiée
+          <h1>{{ offerInfos.attributes.title }}</h1>
+
+          <p>{{ formatedPrice }} €</p>
+
+          <p class="date">{{ formatDate }}</p>
+
+          <h2>Description</h2>
+          <p>{{ offerInfos.attributes.description }}</p>
+
+          <p class="city">
+            <font-awesome-icon :icon="['fas', 'location-dot']" /> Agon-Coutainville (50230)
           </p>
-          <p><font-awesome-icon :icon="['far', 'clock']" /> Répond généralement en 1 heure</p>
         </div>
 
-        <div>
-          <button>Acheter</button>
-          <button>Message</button>
+        <div class="secondCol">
+          <div class="owner">
+            <div>
+              <img
+                :src="offerInfos.attributes.owner.data.attributes.avatar.data.attributes.url"
+                :alt="offerInfos.attributes.owner.data.attributes.username"
+                v-if="offerInfos.attributes.owner.data.attributes.avatar.data"
+              />
+              <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
+            </div>
+
+            <p class="identity">
+              <font-awesome-icon :icon="['fas', 'check-double']" /> Pièce d’identité vérifiée
+            </p>
+            <p><font-awesome-icon :icon="['far', 'clock']" /> Répond généralement en 1 heure</p>
+          </div>
+
+          <div>
+            <button>Acheter</button>
+            <button>Message</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
-.container {
+main .container {
   padding: 30px 0;
 }
 

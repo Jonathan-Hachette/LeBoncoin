@@ -1,18 +1,22 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
-const props = defineProps(['sort', 'pricemin', 'pricemax', 'title', 'page'])
+const props = defineProps(['sort', 'pricemax', 'pricemin'])
 
+// Les 'ref' sont initialisées avec la valeur des 'props' pour que les `input` affichent ces valeurs dès l'arrivée sur la page
 const priceMin = ref(props.pricemin)
 const priceMax = ref(props.pricemax)
-const sort = ref(props.sort)
+const sort = ref('')
 
+const route = useRoute()
 const router = useRouter()
 
 const handleSubmit = () => {
-  const queries = { ...props }
+  // Copie des query existantes pour pouvoir les modifier
+  const queries = { ...route.query }
 
+  // SI la valeur existe, elle est ajoutée aux query, SINON la clé est retirée des query
   if (priceMin.value) {
     queries.pricemin = priceMin.value
   } else {
@@ -31,98 +35,141 @@ const handleSubmit = () => {
     delete queries.sort
   }
 
+  // Pour toujours commencer à la première page de la recherche
   queries.page = 1
 
-  router.push({
-    name: 'home',
-    query: queries
-  })
+  // On navigue vers la route actuelle avec les query mises à jour
+  router.push({ name: 'home', query: queries })
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <div class="filtersBloc">
-      <div class="pricePart">
-        <p>Prix</p>
+    <div class="pricePart">
+      <p>Prix</p>
 
+      <div>
         <div>
-          <div>
-            <input
-              type="number"
-              name="priceMin"
-              id="priceMin"
-              placeholder="Minimum"
-              min="0"
-              v-model="priceMin"
-            />
-            <label for="priceMin">€</label>
-          </div>
-
-          <div>
-            <input
-              type="number"
-              name="priceMax"
-              id="priceMax"
-              :min="priceMin"
-              placeholder="Maximum"
-              v-model="priceMax"
-            />
-            <label for="priceMax">€</label>
-          </div>
+          <input
+            type="number"
+            name="priceMin"
+            id="priceMin"
+            placeholder="Minimum"
+            min="0"
+            v-model="priceMin"
+          />
+          <label for="priceMin">€</label>
         </div>
-      </div>
-
-      <div class="sortPart">
-        <p>Tri</p>
 
         <div>
-          <label>
-            <span>Prix croissants</span>
-            <input type="radio" id="priceAsc" value="price:asc" v-model="sort" />
-          </label>
-
-          <label for="priceDsc">
-            <span>Prix décroissants</span>
-            <input type="radio" id="priceDesc" value="price:dsc" v-model="sort" />
-          </label>
-
-          <label for="noSort">
-            <span>Pas de tri</span>
-            <input type="radio" id="noSort" value="" v-model="sort" />
-          </label>
+          <input
+            type="number"
+            name="priceMax"
+            id="priceMax"
+            placeholder="Maximum"
+            :min="priceMin"
+            v-model="priceMax"
+          />
+          <label for="priceMax">€</label>
         </div>
       </div>
     </div>
+
+    <div class="sortPart">
+      <p>Tri</p>
+
+      <div>
+        <label for="priceAsc">
+          Prix croissants
+          <input type="radio" value="price:asc" id="priceAsc" v-model="sort" />
+        </label>
+
+        <label for="priceDesc">
+          Prix décroissants
+          <input type="radio" value="price:desc" id="priceDesc" v-model="sort" />
+        </label>
+
+        <label for="noSort">
+          Pas de tri
+          <input type="radio" value="" id="noSort" v-model="sort" />
+        </label>
+      </div>
+    </div>
+
     <button>Rechercher</button>
   </form>
 </template>
 
 <style scoped>
-/* FORM */
-
 form {
-  display: flex;
+  margin: 40px 0;
   gap: 50px;
+  display: flex;
   justify-content: space-between;
-  padding-top: 40px;
-  margin-bottom: 40px;
+}
+/* Suppression des flèches du champ de saisie des prix sur les navigateurs Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-form > div {
-  display: flex;
-  gap: 40px;
+/* Suppression des flèches du champ de saisie des prix sur le navigateur Firefox */
+input[type='number'] {
+  appearance: none;
 }
-
-.filtersBloc {
-  display: flex;
+input {
+  outline: none;
 }
-
 p {
-  margin-bottom: 10px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
+/* -- Price Part ------------ */
+.pricePart div {
+  display: flex;
+}
+.pricePart > div {
+  gap: 20px;
+}
+.pricePart input {
+  height: 43px;
+  width: 150px;
+  border: 1px solid var(--grey-med);
+  border-radius: 15px 0 0 15px;
+  padding-left: 10px;
+}
+.pricePart input::placeholder {
+  color: grey;
+  font-size: 16px;
+}
+.pricePart label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 43px;
+  width: 45px;
+  border: 1px solid var(--grey-med);
+  border-left: none;
+  border-radius: 0 15px 15px 0;
+  font-size: 14px;
+}
+/* -- Sort Part ------------ */
+.sortPart {
+  display: flex;
+  flex-direction: column;
+}
+.sortPart > div {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.sortPart label:not(:last-child) {
+  margin-right: 15px;
+}
+
+/* -- Button ----------- */
 button {
   align-self: center;
   background-color: var(--orange);
@@ -132,52 +179,5 @@ button {
   color: white;
   font-weight: bold;
   font-size: 14px;
-}
-
-/* Price Part */
-.pricePart div {
-  display: flex;
-}
-
-.pricePart > div {
-  display: flex;
-  gap: 15px;
-}
-
-.pricePart input {
-  height: 43px;
-  width: 150px;
-  border: 1px solid var(--grey-med);
-  border-radius: 15px 0 0 15px;
-  outline: none;
-  appearance: none;
-  padding-left: 10px;
-}
-
-.pricePart label {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 43px;
-  width: 45px;
-  border: 1px solid var(--grey-med);
-  border-radius: 0px 15px 15px 0px;
-  border-left: none;
-}
-
-/* Sort Part */
-.sortPart {
-  display: flex;
-  flex-direction: column;
-}
-
-.sortPart > div {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.sortPart label {
-  margin-right: 15px;
 }
 </style>
