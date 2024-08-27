@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
 import { useCycleList } from '@vueuse/core'
 import axios from 'axios'
-
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { formatPrice } from '../utils/formatPrice'
+
+const router = useRouter()
 
 const props = defineProps({
   id: {
@@ -101,7 +103,7 @@ const formatedPrice = computed(() => {
           <p>{{ offerInfos.attributes.description }}</p>
 
           <p class="city">
-            <font-awesome-icon :icon="['fas', 'location-dot']" /> Agon-Coutainville (50230)
+            <font-awesome-icon :icon="['fas', 'map-marker-alt']" /> Agon-Coutainville (50230)
           </p>
         </div>
 
@@ -123,7 +125,17 @@ const formatedPrice = computed(() => {
           </div>
 
           <div>
-            <button>Acheter</button>
+            <button
+              @click="
+                router.push({
+                  name: 'payment',
+                  params: { id: offerInfos.id }
+                })
+              "
+            >
+              Acheter
+            </button>
+
             <button>Message</button>
           </div>
         </div>
@@ -133,7 +145,11 @@ const formatedPrice = computed(() => {
 </template>
 
 <style scoped>
-main .container {
+a {
+  cursor: pointer;
+}
+
+.container {
   padding: 30px 0;
 }
 
@@ -250,6 +266,7 @@ button {
   padding: 15px;
   border-radius: 15px;
   font-weight: bold;
+  cursor: pointer;
 }
 button:first-child {
   background-color: var(--orange);

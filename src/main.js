@@ -26,6 +26,7 @@ import {
   faAngleRight,
   faArrowRight,
   faCamera,
+  faCheck,
   faCheckDouble,
   faCircle,
   faMapMarkerAlt,
@@ -51,6 +52,7 @@ library.add(
   faAngleLeft,
   faCamera,
   faPlus,
+  faCheck,
   faSignOutAlt
 )
 
