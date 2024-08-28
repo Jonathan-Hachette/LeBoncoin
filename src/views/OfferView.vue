@@ -125,17 +125,9 @@ const formatedPrice = computed(() => {
           </div>
 
           <div>
-            <button
-              @click="
-                router.push({
-                  name: 'payment',
-                  params: { id: offerInfos.id }
-                })
-              "
+            <RouterLink :to="{ name: 'payment', params: { id: offerInfos.id } }"
+              >Acheter</RouterLink
             >
-              Acheter
-            </button>
-
             <button>Message</button>
           </div>
         </div>
@@ -145,10 +137,6 @@ const formatedPrice = computed(() => {
 </template>
 
 <style scoped>
-a {
-  cursor: pointer;
-}
-
 .container {
   padding: 30px 0;
 }
@@ -249,9 +237,11 @@ h2 {
   margin: 50px 0 25px 0;
   padding-top: 20px;
 }
+
 svg {
   margin-right: 3px;
 }
+
 .secondCol > div:last-child {
   margin-top: 15px;
   padding: 15px 0;
@@ -260,17 +250,21 @@ svg {
   flex-direction: column;
   gap: 10px;
 }
-button {
+
+button,
+a {
   border: none;
   color: white;
   padding: 15px;
   border-radius: 15px;
   font-weight: bold;
-  cursor: pointer;
+  font-size: inherit;
 }
-button:first-child {
+a {
   background-color: var(--orange);
+  text-align: center;
 }
+
 button:last-child {
   background-color: var(--blue-dark);
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps(['sort', 'pricemax', 'pricemin'])
 
@@ -107,17 +107,7 @@ form {
   display: flex;
   justify-content: space-between;
 }
-/* Suppression des flèches du champ de saisie des prix sur les navigateurs Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
-/* Suppression des flèches du champ de saisie des prix sur le navigateur Firefox */
-input[type='number'] {
-  appearance: none;
-}
 input {
   outline: none;
 }
@@ -179,5 +169,20 @@ button {
   color: white;
   font-weight: bold;
   font-size: 14px;
+  cursor: pointer;
+}
+
+/* INPUT APPEARANCE */
+
+/* Suppression des flèches du champ de saisie des prix sur les navigateurs Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Suppression des flèches du champ de saisie des prix sur le navigateur Firefox */
+input[type='number'] {
+  appearance: none;
 }
 </style>

@@ -24,6 +24,7 @@ import {
 import {
   faAngleLeft,
   faAngleRight,
+  faArrowLeft,
   faArrowRight,
   faCamera,
   faCheck,
@@ -53,7 +54,8 @@ library.add(
   faCamera,
   faPlus,
   faCheck,
-  faSignOutAlt
+  faSignOutAlt,
+  faArrowLeft
 )
 
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon)

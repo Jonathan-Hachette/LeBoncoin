@@ -1,7 +1,9 @@
 import { inject } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import PaymentView from '@/views/PaymentView.vue'
 import HomeView from '../views/HomeView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,13 +46,14 @@ const router = createRouter({
     {
       path: '/payment/:id',
       name: 'payment',
-      // Ajout des Meta Fields
+      props: true,
       meta: { requireAuth: true },
-      component: () => import('../views/PaymentView.vue'),
-      props: (route) => ({
-        id: Number(route.params.id),
-        title: route.query.title
-      })
+      component: PaymentView
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'notFound',
+      component: NotFoundView
     }
   ],
   // Pour toujours revenir en haut de la page lorsqu'on navigue
@@ -67,7 +70,7 @@ router.beforeEach((to, from) => {
   if (to.meta.requireAuth && !GlobalStore.userInfos.value.token) {
     //   👆 La route requière une authentification et 👆 l'utilisateur n'est pas connecté => donc on le redirige
 
-    return { name: 'login', query: { redirect: to.name } }
+    return { name: 'login', query: { redirect: to.path } }
     // Ajout d'une query 'redirect' pour savoir quelle page l'utilisateur avait demandé avant d'être redirigé
   }
 })
