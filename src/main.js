@@ -77,7 +77,9 @@ const changeUserInfos = (infos) => {
   userInfos.value = infos
 }
 
+const apiUrl = 'http://localhost:1337' // URL du back strapi en local
+
 // Création du 'provider'
-app.provide('GlobalStore', { userInfos: userInfos, changeUserInfos: changeUserInfos })
+app.provide('GlobalStore', { userInfos: userInfos, changeUserInfos: changeUserInfos, apiUrl })
 
 app.mount('#app')

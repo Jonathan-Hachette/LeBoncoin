@@ -1,7 +1,7 @@
 <script setup>
-import { RouterLink, useRouter } from 'vue-router'
-import { ref, inject } from 'vue'
 import axios from 'axios'
+import { inject, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -19,14 +19,11 @@ const handleSubmit = async () => {
     isSubmitting.value = true
 
     if (username.value && email.value && password.value) {
-      const { data } = await axios.post(
-        'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local/register',
-        {
-          username: username.value,
-          email: email.value,
-          password: password.value
-        }
-      )
+      const { data } = await axios.post('http://localhost:1337/api/auth/local/register', {
+        username: username.value,
+        email: email.value,
+        password: password.value
+      })
 
       // console.log('SignupView - data>>', data)
 

@@ -1,7 +1,7 @@
 <script setup>
-import { ref, inject, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { computed, inject, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const GlobalStore = inject('GlobalStore')
 const router = useRouter()
@@ -43,16 +43,12 @@ const handleSubmit = async () => {
     formData.append('data', stringifiedInfos)
 
     try {
-      const { data } = await axios.post(
-        'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers',
-        formData,
-        {
-          headers: {
-            Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
-            'Content-Type': 'multipart/form-data'
-          }
+      const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
+        headers: {
+          Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+          'Content-Type': 'multipart/form-data'
         }
-      )
+      })
 
       //   console.log('PublishView - data>>', data)
 

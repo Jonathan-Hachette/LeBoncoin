@@ -19,13 +19,20 @@ const handleSubmit = async () => {
     isSubmitting.value = true
 
     if (email.value && password.value) {
-      const { data } = await axios.post(
-        'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local',
-        {
-          identifier: email.value,
-          password: password.value
-        }
-      )
+      //Requête au back du reacteur
+      // const { data } = await axios.post(
+      //   'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local',
+      //   {
+      //     identifier: email.value,
+      //     password: password.value
+      //   }
+      // )
+
+      // Requête au back en local
+      const { data } = await axios.post('http://localhost:1337/api/auth/local', {
+        identifier: email.value,
+        password: password.value
+      })
 
       // console.log('LoginView - data>>', data)
 

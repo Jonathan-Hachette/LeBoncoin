@@ -1,6 +1,6 @@
 <script setup>
-import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import { formatPrice } from '../utils/formatPrice'
 
 const props = defineProps({
@@ -48,11 +48,11 @@ const formatedPrice = computed(() => {
     <div class="firstPart">
       <div class="owner">
         <img
-          :src="offerInfos.owner.data.attributes.avatar.data.attributes.url"
+          :src="offerInfos.user.data.attributes.avatar.data.attributes.url"
           alt=""
-          v-if="offerInfos.owner.data.attributes.avatar.data"
+          v-if="offerInfos.user.data.attributes.avatar.data"
         />
-        <p>{{ offerInfos.owner.data.attributes.username }}</p>
+        <p>{{ offerInfos.user.data.attributes.username }}</p>
       </div>
 
       <img
@@ -85,6 +85,7 @@ const formatedPrice = computed(() => {
   flex-direction: column;
   justify-content: space-between;
 }
+
 img {
   height: 25px;
   width: 25px;

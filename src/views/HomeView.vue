@@ -23,12 +23,20 @@ onMounted(async () => {
         pricefilters += `&filters[price][$gte]=${props.pricemin}`
       }
 
+      // Requête au back du Reacteur
+
+      // const { data } = await axios.get(
+      //   `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=pictures&populate[1]=owner.avatar&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
+      // )
+
+      // Requête au back en local
+
       const { data } = await axios.get(
-        `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers?populate[0]=pictures&populate[1]=owner.avatar&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
+        `http://localhost:1337/api/offers?populate[user][populate]=avatar&populate[pictures]=true&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
       )
 
       // Pour vérifer les informations reçues
-      // console.log('HomeView - data >>>', data)
+      console.log('HomeView - data >>>', data)
 
       offersList.value = data
     } catch (error) {
