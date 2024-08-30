@@ -26,7 +26,7 @@ onMounted(async () => {
   try {
     //  Destruction de la clé 'data'. Pour rappel, les données reçus d'une requête faite avec axios se trouve toujours à la clé 'data'
     const { data } = await axios.get(
-      `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
+      `http://localhost:1337/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
     )
 
     // Pour vérifer les informations reçues
@@ -113,7 +113,7 @@ const formatedPrice = computed(() => {
               <img
                 :src="offerInfos.attributes.owner.data.attributes.avatar.data.attributes.url"
                 :alt="offerInfos.attributes.owner.data.attributes.username"
-                v-if="offerInfos.attributes.owner.data.attributes.avatar.data"
+                v-if="offerInfos.attributes.owner?.data?.attributes?.avatar?.data"
               />
               <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
             </div>

@@ -36,10 +36,10 @@ const handleSubmit = async () => {
       title: title.value,
       description: description.value,
       price: price.value,
-      owner: GlobalStore.userInfos.value.id
+      owner: GlobalStore.userInfos.value.id // Ajout de l'ID du propriétaire ici
     })
 
-    //   Ajout des autres informations au 'FormData'
+    // Ajout des autres informations au 'FormData'
     formData.append('data', stringifiedInfos)
 
     try {
@@ -50,12 +50,15 @@ const handleSubmit = async () => {
         }
       })
 
-      //   console.log('PublishView - data>>', data)
+      // Affichage des données en cas de succès
+      console.log('PublishView - data>>>>', data)
 
       isPublishing.value = false
 
+      // Redirige vers la page de l'offre nouvellement créée
       router.push({ name: 'offer', params: { id: data.data.id } })
     } catch (error) {
+      // Affichage de l'erreur
       console.log('catch Publish>>', error)
 
       errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
@@ -67,7 +70,7 @@ const handleSubmit = async () => {
   }
 }
 
-// 👇 La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
+// La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
 const imagesPreviewArray = computed(() => {
   const tab = []
 
@@ -95,11 +98,7 @@ const selectPictures = (event) => {
 
 // Gère l'affiche du texte du bouton de soumission du formulaire
 const btnText = computed(() => {
-  if (isPublishing.value) {
-    return 'Envoi en cours ...'
-  } else {
-    return 'Déposer mon annonce'
-  }
+  return isPublishing.value ? 'Envoi en cours ...' : 'Déposer mon annonce'
 })
 
 // Vider le message d'erreur si un champ est modifié
@@ -126,8 +125,7 @@ const emptyErrorMessage = () => {
           rows="10"
           v-model="description"
           @input="emptyErrorMessage()"
-        >
-        </textarea>
+        ></textarea>
         <p>
           Nous vous rappelons que la vente de contrefaçons est interdite. Nous vous invitons à
           ajouter tout élément permettant de prouver l’authenticité de votre article: numéro de
@@ -161,7 +159,7 @@ const emptyErrorMessage = () => {
           </label>
 
           <div class="previewsBloc">
-            <div v-for="image in imagesPreviewArray">
+            <div v-for="image in imagesPreviewArray" :key="image">
               <img :src="image" alt="Prévisualisation des images sélectionnées" />
             </div>
           </div>

@@ -131,7 +131,6 @@ const handleSubmit = async () => {
 
 <style scoped>
 .container {
-  height: calc(100vh - var(--header-height) - var(--footer-height));
   background-image: url('../assets/img/login-illustration.png');
   background-repeat: no-repeat;
   background-size: contain;

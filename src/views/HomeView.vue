@@ -32,7 +32,7 @@ onMounted(async () => {
       // Requête au back en local
 
       const { data } = await axios.get(
-        `http://localhost:1337/api/offers?populate[user][populate]=avatar&populate[pictures]=true&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
+        `http://localhost:1337/api/offers?populate[owner][populate]=avatar&populate[pictures]=true&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
       )
 
       // Pour vérifer les informations reçues
