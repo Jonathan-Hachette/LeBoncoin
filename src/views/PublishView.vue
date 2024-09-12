@@ -16,88 +16,127 @@ const isPublishing = ref(false)
 
 const handleSubmit = async () => {
   errorMessage.value = ''
-
   isPublishing.value = true
 
-  // Vérifie que tous les champs soient remplis
-  if (title.value && price.value && description.value && pictures.value) {
-    // Création du nouvel objet 'FormData'
-    const formData = new FormData()
+  // Création d'un objet FormData vide
+  const formData = new FormData()
 
-    // 👇 Ajout des images au 'FormData' une par une
-    for (const key in pictures.value) {
-      if (Object.hasOwnProperty.call(pictures.value, key)) {
-        formData.append('files.pictures', pictures.value[key])
-      }
-    }
+  // Ajout des informations au FormData
+  const stringifiedInfos = JSON.stringify({
+    title: title.value,
+    description: description.value,
+    price: price.value
+    // 'owner' peut être omis pour simplifier le test
+  })
 
-    // "Stringification" de l'objet contenant les autres informations
-    const stringifiedInfos = JSON.stringify({
-      title: title.value,
-      description: description.value,
-      price: price.value,
-      owner: GlobalStore.userInfos.value.id // Ajout de l'ID du propriétaire ici
-    })
+  formData.append('data', stringifiedInfos)
 
-    // Ajout des autres informations au 'FormData'
-    formData.append('data', stringifiedInfos)
-
-    console.log('formData before sending:', formData.get('data'), formData.getAll('files.pictures'))
-
-    try {
-      // Requête en local
-      // const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
-      //   headers: {
-      //     Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
-      //     'Content-Type': 'multipart/form-data'
-      //   }
-      // })
-
-      // Requête au back sur Northflank
-
-      const { data } = await axios.post(
-        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers',
-        formData,
-        {
-          headers: {
-            Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
-            'Content-Type': 'multipart/form-data'
-          }
+  try {
+    const { data } = await axios.post(
+      'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers',
+      formData,
+      {
+        headers: {
+          Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+          'Content-Type': 'multipart/form-data'
         }
-      )
+      }
+    )
 
-      // Affichage des données en cas de succès
-      console.log('PublishView - data>>>>', data)
-
-      isPublishing.value = false
-
-      // Redirige vers la page de l'offre nouvellement créée
-      router.push({ name: 'offer', params: { id: data.data.id } })
-    } catch (error) {
-      // Affichage de l'erreur
-      console.log('catch Publish>>', error)
-
-      errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
-      isPublishing.value = false
-    }
-  } else {
-    errorMessage.value = 'Veuillez remplir tous les champs'
+    console.log('PublishView - data>>>>', data)
+    isPublishing.value = false
+    router.push({ name: 'offer', params: { id: data.data.id } })
+  } catch (error) {
+    console.log('catch Publish>>', error)
+    errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
     isPublishing.value = false
   }
 }
 
-// La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
-const imagesPreviewArray = computed(() => {
-  const tab = []
+// const handleSubmit = async () => {
+//   errorMessage.value = ''
 
-  for (const key in pictures.value) {
-    if (Object.hasOwnProperty.call(pictures.value, key)) {
-      tab.push(URL.createObjectURL(pictures.value[key]))
-    }
-  }
+//   isPublishing.value = true
 
-  return tab
-})
+//   // Vérifie que tous les champs soient remplis
+//   if (title.value && price.value && description.value && pictures.value) {
+//     // Création du nouvel objet 'FormData'
+//     const formData = new FormData()
+
+//     // 👇 Ajout des images au 'FormData' une par une
+//     for (const key in pictures.value) {
+//       if (Object.hasOwnProperty.call(pictures.value, key)) {
+//         formData.append('files.pictures', pictures.value[key])
+//       }
+//     }
+
+//     // "Stringification" de l'objet contenant les autres informations
+//     const stringifiedInfos = JSON.stringify({
+//       title: title.value,
+//       description: description.value,
+//       price: price.value,
+//       owner: GlobalStore.userInfos.value.id // Ajout de l'ID du propriétaire ici
+//     })
+
+//     // Ajout des autres informations au 'FormData'
+//     formData.append('data', stringifiedInfos)
+
+//     console.log('formData before sending:', formData.get('data'), formData.getAll('files.pictures'))
+
+//     try {
+//       // Requête en local
+//       // const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
+//       //   headers: {
+//       //     Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+//       //     'Content-Type': 'multipart/form-data'
+//       //   }
+//       // })
+
+//       // Requête au back sur Northflank
+
+//       const { data } = await axios.post(
+//         'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers',
+//         formData,
+//         {
+//           headers: {
+//             Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+//             'Content-Type': 'multipart/form-data'
+//           }
+//         }
+//       )
+
+//       // Affichage des données en cas de succès
+//       console.log('PublishView - data>>>>', data)
+
+//       isPublishing.value = false
+
+//       // Redirige vers la page de l'offre nouvellement créée
+//       router.push({ name: 'offer', params: { id: data.data.id } })
+//     } catch (error) {
+//       // Affichage de l'erreur
+//       console.log('catch Publish>>', error)
+
+//       errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
+//       isPublishing.value = false
+//     }
+//   } else {
+//     errorMessage.value = 'Veuillez remplir tous les champs'
+//     isPublishing.value = false
+//   }
+// }
+
+// // La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
+// const imagesPreviewArray = computed(() => {
+//   const tab = []
+
+//   for (const key in pictures.value) {
+//     if (Object.hasOwnProperty.call(pictures.value, key)) {
+//       tab.push(URL.createObjectURL(pictures.value[key]))
+//     }
+//   }
+
+//   return tab
+// })
 
 // Pour éviter qu'il y ait plus du 10 photos de sélectionnées
 const selectPictures = (event) => {
