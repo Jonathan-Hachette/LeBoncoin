@@ -9,7 +9,7 @@ const router = useRouter()
 
 // Création d'une instance de Stripe
 const stripePromise = loadStripe(
-  'pk_test_51HCObyDVswqktOkX6VVcoA7V2sjOJCUB4FBt3EOiAdSz5vWudpWxwcSY8z2feWXBq6lwMgAb5IVZZ1p84ntLq03H00LDVc2RwP'
+  'pk_test_51PqXp22M0CmIqLAyppCf0t3bWu5skKTRyB3QN8ncRskeWaQYgidrxt6s8txg8JCIJC255cBJLEJmtcqWkdLk6qGA007Dezj1qO'
 )
 
 // Récupération du 'params' en 'props'
@@ -45,11 +45,18 @@ onBeforeMount(async () => {
 
 onMounted(async () => {
   try {
+    //Requête en local
+    // const { data } = await axios.get(
+    //   `http://localhost:1337/api/offers/${props.id}?populate[0]=pictures`
+    // )
+
+    //Requête au back Northflank
+
     const { data } = await axios.get(
-      `https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers/${props.id}?populate[0]=pictures`
+      `https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers/${props.id}?populate[0]=pictures`
     )
 
-    // console.log('PaymentView - data >>>', data.data)
+    console.log('PaymentView - data >>>', data.data)
 
     offerInfos.value = data.data
   } catch (error) {
@@ -268,60 +275,74 @@ const handlePayment = async () => {
 .container {
   padding-top: 40px;
 }
+
 h1,
 h2,
 h3,
 h4 {
   font-weight: bold;
 }
+
 h1 {
   font-size: 24px;
 
   margin-bottom: 20px;
 }
+
 h2 {
   font-size: 18px;
 }
+
 h3 {
   flex: 1;
 }
+
 .columns {
   display: flex;
   gap: 25px;
   margin-bottom: 40px;
 }
+
 /* -- First column ------------------- */
+
 .firstCol {
   flex: 1;
 }
+
 .firstCol p {
   font-size: 12px;
   margin: 5px 0;
 }
+
 .inputs,
 form {
   display: flex;
   flex-direction: column;
 }
+
 form {
   gap: 20px;
 }
+
 form > div {
   background-color: #fff;
   box-shadow: 0 0 7px 3px var(--grey-med);
   padding: 20px 30px;
   border-radius: 7px;
 }
+
 .firstCol label {
   margin-top: 30px;
   margin-bottom: 10px;
 }
+
 .firstCol input {
   height: 45px;
   border: 1.5px solid var(--grey-med);
   border-radius: 15px;
   padding-left: 15px;
 }
+
 #card-element {
   margin: 20px 0;
   border: 1.5px solid var(--grey-med);
@@ -329,6 +350,7 @@ form > div {
   padding: 15px;
   min-height: 45px;
 }
+
 button {
   border: none;
   color: white;
@@ -340,20 +362,25 @@ button {
   margin-bottom: 10px;
   cursor: pointer;
 }
+
 button:disabled {
   opacity: 0.5;
   cursor: normal;
 }
+
 .submitBloc {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .submitBloc p {
   color: var(--orange);
   font-size: 16px;
 }
+
 /* -- Second column ------------------- */
+
 .secondCol {
   width: 355px;
   align-self: flex-start;
@@ -361,6 +388,7 @@ button:disabled {
   box-shadow: 0 0 7px 3px var(--grey-med);
   border-radius: 7px;
 }
+
 .secondCol > div:not(:nth-child(2)) {
   display: flex;
   justify-content: space-between;
@@ -368,17 +396,21 @@ button:disabled {
   padding: 15px;
   gap: 10px;
 }
+
 img {
   width: 80px;
   height: 80px;
   border-radius: 5px;
+  object-fit: cover;
 }
+
 .optionsPart {
   border-top: 1px solid var(--grey-med);
   border-bottom: 1px solid var(--grey-med);
   padding: 15px;
   margin: 20px 0;
 }
+
 .optionsPart > div {
   display: flex;
   gap: 10px;
@@ -386,12 +418,15 @@ img {
   justify-content: space-between;
   margin: 10px 0;
 }
+
 .optionsPart > div:last-of-type {
   margin-top: 25px;
 }
+
 .optionsPart input {
   margin: 0;
 }
+
 .optionsPart label {
   margin: 0;
   display: flex;
@@ -399,20 +434,24 @@ img {
   gap: 5px;
   flex: 1;
 }
+
 .optionsPart .smallText {
   font-size: 12px;
   color: var(--grey);
   margin: 5px 0;
 }
+
 .price {
   font-weight: bold;
   color: var(--brown);
 }
+
 .optionsPart > p {
   display: flex;
   margin-bottom: 10px;
   line-height: 20px;
 }
+
 .optionsPart svg {
   color: var(--green);
   font-size: 20px;

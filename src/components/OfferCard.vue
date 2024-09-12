@@ -50,9 +50,9 @@ const formatedPrice = computed(() => {
         <img
           :src="offerInfos.owner.data.attributes.avatar.data.attributes.url"
           alt=""
-          v-if="offerInfos.owner.data?.attributes?.avatar.data"
+          v-if="offerInfos.owner?.data.attributes?.avatar.data"
         />
-        <p>{{ offerInfos.owner.data.attributes.username }}</p>
+        <p>{{ offerInfos.owner?.data.attributes.username }}</p>
       </div>
 
       <img

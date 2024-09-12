@@ -19,19 +19,33 @@ const handleSubmit = async () => {
     isSubmitting.value = true
 
     if (username.value && email.value && password.value) {
-      const { data } = await axios.post('http://localhost:1337/api/auth/local/register', {
-        username: username.value,
-        email: email.value,
-        password: password.value
-      })
+      // Requête en locale
 
-      // console.log('SignupView - data>>', data)
+      // const { data } = await axios.post('http://localhost:1337/api/auth/local/register', {
+      //   username: username.value,
+      //   email: email.value,
+      //   password: password.value
+      // })
+
+      //Requête au back Northflank
+
+      const { data } = await axios.post(
+        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/auth/local/register',
+        {
+          username: username.value,
+          email: email.value,
+          password: password.value
+        }
+      )
+
+      console.log('SignupView - data>>', data)
 
       // Création de l'objet qui sera stocké dans le fournisseur de dépendance et les cookies
       const userInfos = {
         id: data.user.id,
         username: data.user.username,
-        token: data.jwt
+        token: data.jwt,
+        email: data.user.email
       }
 
       GlobalStore.changeUserInfos(userInfos)

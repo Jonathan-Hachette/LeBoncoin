@@ -33,7 +33,8 @@ import {
   faMapMarkerAlt,
   faPlus,
   faSearch,
-  faSignOutAlt
+  faSignOutAlt,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
 // Ajout de l'icône à la bibliothèque
@@ -55,7 +56,8 @@ library.add(
   faPlus,
   faCheck,
   faSignOutAlt,
-  faArrowLeft
+  faArrowLeft,
+  faTrash
 )
 
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon)
@@ -70,7 +72,8 @@ const userInfos = ref(
   $cookies.get('userInfos') || {
     id: '',
     username: '',
-    token: ''
+    token: '',
+    email: ''
   }
 )
 const changeUserInfos = (infos) => {

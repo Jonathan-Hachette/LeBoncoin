@@ -18,7 +18,8 @@ const disconnection = () => {
   GlobalStore.changeUserInfos({
     id: '',
     username: '',
-    token: ''
+    token: '',
+    email: ''
   })
 
   router.replace({ name: 'home' })
@@ -75,7 +76,11 @@ const handleSearch = () => {
           <div v-if="GlobalStore.userInfos.value.username">
             <div class="connection">
               <font-awesome-icon :icon="['far', 'user']" />
-              <p>{{ GlobalStore.userInfos.value.username }}</p>
+              <p>
+                <RouterLink :to="{ name: 'profile' }">
+                  {{ GlobalStore.userInfos.value.username }}
+                </RouterLink>
+              </p>
             </div>
 
             <div>
@@ -89,7 +94,6 @@ const handleSearch = () => {
 
           <RouterLink :to="{ name: 'login' }" class="connection" v-else>
             <font-awesome-icon :icon="['far', 'user']" />
-
             <p>Se connecter</p>
           </RouterLink>
         </div>

@@ -42,13 +42,29 @@ const handleSubmit = async () => {
     // Ajout des autres informations au 'FormData'
     formData.append('data', stringifiedInfos)
 
+    console.log('formData before sending:', formData.get('data'), formData.getAll('files.pictures'))
+
     try {
-      const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
-        headers: {
-          Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
-          'Content-Type': 'multipart/form-data'
+      // Requête en local
+      // const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
+      //   headers: {
+      //     Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // })
+
+      // Requête au back sur Northflank
+
+      const { data } = await axios.post(
+        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers',
+        formData,
+        {
+          headers: {
+            Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+            'Content-Type': 'multipart/form-data'
+          }
         }
-      })
+      )
 
       // Affichage des données en cas de succès
       console.log('PublishView - data>>>>', data)

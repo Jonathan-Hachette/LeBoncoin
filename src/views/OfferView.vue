@@ -24,9 +24,16 @@ const cyclelist = computed(() => {
 
 onMounted(async () => {
   try {
-    //  Destruction de la clé 'data'. Pour rappel, les données reçus d'une requête faite avec axios se trouve toujours à la clé 'data'
+    //Requête locale
+
+    // const { data } = await axios.get(
+    //   `http://localhost:1337/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
+    // )
+
+    //Requête au back sur Northflank
+
     const { data } = await axios.get(
-      `http://localhost:1337/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
+      `https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
     )
 
     // Pour vérifer les informations reçues
@@ -115,7 +122,7 @@ const formatedPrice = computed(() => {
                 :alt="offerInfos.attributes.owner.data.attributes.username"
                 v-if="offerInfos.attributes.owner?.data?.attributes?.avatar?.data"
               />
-              <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
+              <p>{{ offerInfos.attributes.owner?.data.attributes.username }}</p>
             </div>
 
             <p class="identity">

@@ -19,28 +19,31 @@ const handleSubmit = async () => {
     isSubmitting.value = true
 
     if (email.value && password.value) {
-      //Requête au back du reacteur
-      // const { data } = await axios.post(
-      //   'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local',
-      //   {
-      //     identifier: email.value,
-      //     password: password.value
-      //   }
-      // )
+      // Requête au back Northflank
+
+      const { data } = await axios.post(
+        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/auth/local',
+        {
+          identifier: email.value,
+          password: password.value
+        }
+      )
 
       // Requête au back en local
-      const { data } = await axios.post('http://localhost:1337/api/auth/local', {
-        identifier: email.value,
-        password: password.value
-      })
 
-      // console.log('LoginView - data>>', data)
+      // const { data } = await axios.post('http://localhost:1337/api/auth/local', {
+      //   identifier: email.value,
+      //   password: password.value
+      // })
+
+      console.log('LoginView - data>>', data)
 
       // Création de l'objet qui sera stocké dans le fournisseur de dépendance et les cookies
       const userInfos = {
         id: data.user.id,
         username: data.user.username,
-        token: data.jwt
+        token: data.jwt,
+        email: data.user.email
       }
 
       GlobalStore.changeUserInfos(userInfos)
