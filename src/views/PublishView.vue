@@ -16,7 +16,6 @@ const isPublishing = ref(false)
 
 const handleSubmit = async () => {
   errorMessage.value = ''
-
   isPublishing.value = true
 
   // Vérifie que tous les champs soient remplis
@@ -36,27 +35,17 @@ const handleSubmit = async () => {
       title: title.value,
       description: description.value,
       price: price.value,
-      owner: GlobalStore.userInfos.value.id // Ajout de l'ID du propriétaire ici
+      owner: GlobalStore.userInfos.value.id
     })
 
-    // Ajout des autres informations au 'FormData'
+    //   Ajout des autres informations au 'FormData'
     formData.append('data', stringifiedInfos)
 
-    console.log('formData before sending:', formData.get('data'), formData.getAll('files.pictures'))
-
     try {
-      // Requête en local
-      // const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
-      //   headers: {
-      //     Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
-      //     'Content-Type': 'multipart/form-data'
-      //   }
-      // })
-
-      // Requête au back sur Northflank
+      // Requête en prod
 
       const { data } = await axios.post(
-        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers',
+        'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers',
         formData,
         {
           headers: {
@@ -66,15 +55,23 @@ const handleSubmit = async () => {
         }
       )
 
-      // Affichage des données en cas de succès
-      console.log('PublishView - data>>>>', data)
+      // Requête en locale
+
+      // const { data } = await axios.post('http://localhost:1337/api/offers', formData, {
+      //   headers: {
+      //     Authorization: 'Bearer ' + GlobalStore.userInfos.value.token,
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // })
+
+      //   console.log('PublishView - data>>', data)
 
       isPublishing.value = false
 
-      // Redirige vers la page de l'offre nouvellement créée
+      console.log(GlobalStore.userInfos.value.id)
+
       router.push({ name: 'offer', params: { id: data.data.id } })
     } catch (error) {
-      // Affichage de l'erreur
       console.log('catch Publish>>', error)
 
       errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
@@ -86,7 +83,7 @@ const handleSubmit = async () => {
   }
 }
 
-// La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
+// 👇 La propriété computed qui transforme les images chargées en urls interprétables par une balise 'img' et retourne un tableau contenant toutes ces urls
 const imagesPreviewArray = computed(() => {
   const tab = []
 
@@ -114,7 +111,11 @@ const selectPictures = (event) => {
 
 // Gère l'affiche du texte du bouton de soumission du formulaire
 const btnText = computed(() => {
-  return isPublishing.value ? 'Envoi en cours ...' : 'Déposer mon annonce'
+  if (isPublishing.value) {
+    return 'Envoi en cours ...'
+  } else {
+    return 'Déposer mon annonce'
+  }
 })
 
 // Vider le message d'erreur si un champ est modifié
@@ -141,7 +142,8 @@ const emptyErrorMessage = () => {
           rows="10"
           v-model="description"
           @input="emptyErrorMessage()"
-        ></textarea>
+        >
+        </textarea>
         <p>
           Nous vous rappelons que la vente de contrefaçons est interdite. Nous vous invitons à
           ajouter tout élément permettant de prouver l’authenticité de votre article: numéro de
@@ -175,15 +177,13 @@ const emptyErrorMessage = () => {
           </label>
 
           <div class="previewsBloc">
-            <div v-for="image in imagesPreviewArray" :key="image">
+            <div v-for="image in imagesPreviewArray">
               <img :src="image" alt="Prévisualisation des images sélectionnées" />
             </div>
           </div>
         </div>
 
-        <!-- Ce bouton est désactivé (il n'active plus la soumission du formulaire) si la 'ref' nommée 'isPublishing' est truthy -->
         <button :disabled="isPublishing">{{ btnText }}</button>
-        <!-- Le texte affiché dans ce bouton 👆 est géré par la valeur calculée nommée 'btnText' (définie dans la balise '<script>') -->
       </form>
 
       <p v-if="errorMessage" class="errorMessage">{{ errorMessage }}</p>
@@ -215,6 +215,7 @@ label {
 }
 p {
   color: var(--grey);
+  line-height: 14px;
   font-size: 12px;
   margin: 5px 0 30px 0;
   width: 770px;
@@ -224,10 +225,8 @@ textarea {
   border-radius: 10px;
   border: 1px solid var(--grey);
   padding: 13px;
-
   width: 770px;
 }
-/* Suppression des flèches du champ de saisie des prix sur les navigateurs Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -240,7 +239,6 @@ input[type='number'] {
   border-radius: 15px 0 0 15px;
   padding: 10px;
   height: 100%;
-  /* Suppression des flèches du champ de saisie des prix sur le navigateur Firefox */
   appearance: none;
 }
 .priceBloc {
@@ -329,5 +327,41 @@ button:disabled {
   text-align: center;
   color: var(--orange);
   font-size: 18px;
+}
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 1090px) {
+  main {
+    padding: 20px 20px 20px 20px;
+  }
+}
+
+@media (max-width: 880px) {
+  input:not([type='number']),
+  textarea,
+  p {
+    width: 100%;
+  }
+  .previewsBloc > div {
+    width: calc((100% - 30px) / 4);
+  }
+}
+
+@media (max-width: 650px) {
+  main {
+    padding-top: calc(var(--header-height));
+    height: fit-content;
+  }
+  .previewsBloc > div {
+    width: calc((100% - 20px) / 3);
+  }
+}
+
+@media (max-width: 460px) {
+  .previewsBloc > div {
+    width: calc((100% - 10px) / 2);
+  }
 }
 </style>

@@ -36,6 +36,12 @@ onMounted(async () => {
       `https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers/${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
     )
 
+    // Requête en local
+
+    // const { data } = await axios.get(
+    //   `http://localhost:1337/api/offers${props.id}?populate[0]=pictures&populate[1]=owner.avatar`
+    // )
+
     // Pour vérifer les informations reçues
     console.log('OfferView - data >>>', data.data)
 
