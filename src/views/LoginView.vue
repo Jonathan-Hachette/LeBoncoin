@@ -21,7 +21,7 @@ const handleSubmit = async () => {
 
     if (email.value && password.value) {
       const { data } = await axios.post(
-        'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/auth/local',
+        'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/auth/local',
         {
           identifier: email.value,
           password: password.value
