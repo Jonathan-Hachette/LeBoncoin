@@ -64,7 +64,8 @@ const handleSubmit = async () => {
       //   }
       // })
 
-      //   console.log('PublishView - data>>', data)
+      console.log('PublishView - data>>', data)
+      console.log('GlobalStore', GlobalStore.userInfos.value.token)
 
       isPublishing.value = false
 
