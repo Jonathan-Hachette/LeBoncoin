@@ -74,6 +74,7 @@ const handleSubmit = async () => {
       router.push({ name: 'offer', params: { id: data.data.id } })
     } catch (error) {
       console.log('catch Publish>>', error)
+      console.log('GlobalStore', GlobalStore.userInfos.value.token)
 
       errorMessage.value = 'Il y a eu un souci, veuillez réessayer'
       isPublishing.value = false
