@@ -94,7 +94,7 @@ const handlePayment = async () => {
     const stripeToken = token.id
 
     const response = await axios.post(
-      'https://site--strapileboncoin--2m8zk47gvydr.code.run/api/offers/buy',
+      'https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers/buy',
       {
         token: stripeToken,
         amount: total.value,

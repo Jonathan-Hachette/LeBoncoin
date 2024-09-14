@@ -68,8 +68,6 @@ const handleSubmit = async () => {
 
       isPublishing.value = false
 
-      console.log(GlobalStore.userInfos.value.id)
-
       router.push({ name: 'offer', params: { id: data.data.id } })
     } catch (error) {
       console.log('catch Publish>>', error)
