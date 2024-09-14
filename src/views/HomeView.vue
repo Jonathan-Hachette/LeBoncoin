@@ -37,6 +37,7 @@ onMounted(async () => {
 
       // Pour vérifer les informations reçues
       console.log('HomeView - data >>>', data)
+      console.log('Hello')
 
       offersList.value = data
     } catch (error) {
