@@ -50,6 +50,8 @@ const handleSubmit = async () => {
 
       $cookies.set('userInfos', userInfos)
 
+      console.log('GlobalStore >>>>', GlobalStore.value)
+
       router.push({ path: route.query.redirect || '/' })
     } else {
       errorMessage.value = 'Veuillez remplir tous les champs'
