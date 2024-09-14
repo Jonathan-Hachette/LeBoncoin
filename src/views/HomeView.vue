@@ -26,7 +26,7 @@ onMounted(async () => {
       // Requête au back hébergé sur Northflank
 
       const { data } = await axios.get(
-        `https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers?populate[owner][populate]=avatar&populate[pictures]=true&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
+        `https://site--backend-leboncoin--kp7nxd8w8yds.code.run/api/offers?populate[user][populate]=avatar&populate[pictures]=true&filters[title][$containsi]=${props.title}${pricefilters}&pagination[page]=${props.page}&pagination[pageSize]=10&sort=${props.sort}`
       )
 
       // Requête au back en local
