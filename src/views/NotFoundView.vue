@@ -47,4 +47,19 @@ h1 + p {
   color: white;
   text-shadow: 0 0 4px var(--orange);
 }
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 970px) {
+  .container {
+    background-color: #fafafa;
+  }
+}
+
+@media (max-width: 460px) {
+  .container {
+    height: calc(100vh - var(--header-height) - var(--footer-height) + 140px);
+  }
+}
 </style>

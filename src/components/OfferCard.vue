@@ -50,9 +50,9 @@ const formatedPrice = computed(() => {
         <img
           :src="offerInfos.owner.data.attributes.avatar.data.attributes.url"
           alt=""
-          v-if="offerInfos.owner?.data.attributes.avatar.data"
+          v-if="offerInfos.owner.data.attributes.avatar.data"
         />
-        <p>{{ offerInfos.owner?.data.attributes.username }}</p>
+        <p>{{ offerInfos.owner.data.attributes.username }}</p>
       </div>
 
       <img
@@ -79,13 +79,11 @@ const formatedPrice = computed(() => {
 <style scoped>
 .offerCard {
   height: 380px;
-  /* Calcul de la largeur => 100% de la largeur du parent, moins l'espace entre chaque 'Card' (5 cartes donc 4 espaces => 15px x 4). Le tout divisé par le nombre de carte souhaité sur la ligne */
   width: calc((100% - 60px) / 5);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
 img {
   height: 25px;
   width: 25px;
@@ -130,5 +128,47 @@ img {
 svg {
   font-size: 20px;
   color: var(--grey);
+}
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 1050px) {
+  .offerCard {
+    height: 400px;
+    width: calc((100% - 45px) / 4);
+  }
+
+  .firstPart > img {
+    height: 300px;
+  }
+}
+
+@media (max-width: 880px) {
+  .offerCard {
+    height: 450px;
+    width: calc((100% - 30px) / 3);
+  }
+
+  .firstPart > img {
+    height: 350px;
+  }
+}
+
+@media (max-width: 650px) {
+  .offerCard {
+    height: 450px;
+    width: calc((100% - 15px) / 2);
+  }
+
+  .firstPart > img {
+    height: 320px;
+  }
+}
+
+@media (max-width: 460px) {
+  .offerCard {
+    width: 85%;
+  }
 }
 </style>

@@ -50,7 +50,6 @@ onMounted(async () => {
 <template>
   <main>
     <div class="container">
-      <!-- Affichage du loaded tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
       <p v-if="!offersList.data" class="loader">Chargement en cours ...</p>
 
       <div v-else>
@@ -63,7 +62,6 @@ onMounted(async () => {
         <TimeToSell />
 
         <div class="offersBloc">
-          <!-- Affichage de toutes les cartes -->
           <OfferCard
             v-for="offer in offersList.data"
             :key="offer.id"
@@ -100,5 +98,36 @@ onMounted(async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 40px 15px;
+}
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 1050px) {
+  .topLine {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 880px) {
+  .topLine {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 650px) {
+  .topLine {
+    font-size: 14px;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 460px) {
+  .container {
+    padding-top: 40px;
+  }
+  .offersBloc {
+    justify-content: center;
+  }
 }
 </style>

@@ -1,46 +1,54 @@
 <script setup>
-import { inject, ref } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
+import { inject } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import BtnPublishOffer from './BtnPublishOffer.vue'
+import SearchByTitle from './SearchByTitle.vue'
 
 const GlobalStore = inject('GlobalStore')
 
 const route = useRoute()
 const router = useRouter()
 
-const searchText = ref('')
-
 const disconnection = () => {
-  // Suppression du cookie
   $cookies.remove('userInfos')
 
   GlobalStore.changeUserInfos({
     id: '',
     username: '',
-    token: '',
-    email: ''
+    token: ''
   })
 
   router.replace({ name: 'home' })
 }
 
-const handleSearch = () => {
-  // Copie des query existantes pour pouvoir les modifier
+const handleSearch = (searchText) => {
+  console.log('searchText>>', searchText)
   const queries = { ...route.query }
 
-  // SI la valeur existe, elle est ajoutée aux query, SINON la clé est retirée des query
-  if (searchText.value) {
-    queries.title = searchText.value
+  if (searchText) {
+    queries.title = searchText
   } else {
     delete queries.title
   }
 
-  // Pour toujours commencer à la première page de la recherche
   queries.page = 1
 
-  // On navigue vers la route actuelle avec les query mises à jour
   router.push({ name: 'home', query: queries })
+}
+
+const whenBecomeEmpty = (value) => {
+  if (value === '') {
+    // Copie des query existantes pour pouvoir les modifier
+    const queries = { ...route.query }
+
+    // Suppression de la query 'title'
+    delete queries.title
+
+    // On navigue vers la route actuelle avec les query mises à jour
+    router.push({ name: 'home', query: queries })
+  }
 }
 </script>
 
@@ -53,39 +61,32 @@ const handleSearch = () => {
         </RouterLink>
 
         <div class="middlePart">
-          <BtnPublishOffer />
+          <div class="hideBtnSmall">
+            <BtnPublishOffer />
+          </div>
 
-          <!-- Transformation de la 'div' en formulaire -->
-          <form @submit.prevent="handleSearch">
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Rechercher sur leboncoin"
-              v-model="searchText"
+          <div class="hideInputSmall">
+            <!-- Transformation du formulaire en composant pour plus de clareté car il disparait à partir d'un certaine taille d'écran pour apparaître à un autre endroit  -->
+            <SearchByTitle
+              v-on:handleSearch="handleSearch"
+              v-on:whenBecomeEmpty="whenBecomeEmpty"
             />
-
-            <!-- Ajout d'un bouton pour la soumission du formulaire -->
-            <button>
-              <font-awesome-icon :icon="['fas', 'search']" />
-            </button>
-          </form>
+          </div>
         </div>
 
         <div class="rightPart">
           <div v-if="GlobalStore.userInfos.value.username">
             <div class="connection">
               <font-awesome-icon :icon="['far', 'user']" />
-              <p>
-                <RouterLink :to="{ name: 'profile' }">
-                  {{ GlobalStore.userInfos.value.username }}
-                </RouterLink>
-              </p>
+
+              <RouterLink :to="{ name: 'profile' }">
+                <p>{{ GlobalStore.userInfos.value.username }}</p></RouterLink
+              >
             </div>
 
             <div>
               <font-awesome-icon
-                :icon="['fas', 'sign-out-alt']"
+                :icon="['fas', 'arrow-right-from-bracket']"
                 @click="disconnection"
                 class="disconnection"
               />
@@ -94,9 +95,15 @@ const handleSearch = () => {
 
           <RouterLink :to="{ name: 'login' }" class="connection" v-else>
             <font-awesome-icon :icon="['far', 'user']" />
+
             <p>Se connecter</p>
           </RouterLink>
         </div>
+      </div>
+
+      <!-- Apparait seulement sur les petits écrans -->
+      <div class="displayInputSmall">
+        <SearchByTitle v-on:handleSearch="handleSearch" v-on:whenBecomeEmpty="whenBecomeEmpty" />
       </div>
 
       <div class="bottomBloc">
@@ -147,6 +154,7 @@ header {
   border-bottom: 1px solid var(--grey);
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   background-color: #fff;
   z-index: 5;
@@ -161,6 +169,7 @@ header {
 img {
   width: 140px;
 }
+
 /* -- TOP BLOC ---------------- */
 .topBloc {
   display: flex;
@@ -173,37 +182,6 @@ img {
   display: flex;
   align-items: center;
   gap: 20px;
-}
-form {
-  display: flex;
-  background-color: var(--grey-light);
-  padding: 7px;
-  border-radius: 10px;
-  width: 300px;
-}
-
-.middlePart input {
-  background-color: inherit;
-  border: none;
-  flex: 1;
-  outline: none;
-}
-.middlePart svg {
-  background-color: var(--orange);
-  padding: 8px;
-  box-sizing: content-box;
-  border-radius: 7px;
-}
-.middlePart input::placeholder {
-  color: var(--grey);
-  font-size: 16px;
-}
-form button {
-  display: flex;
-  align-items: center;
-  border: none;
-  background-color: #ffffff00;
-  padding: 0;
 }
 .rightPart > div {
   display: flex;
@@ -225,6 +203,7 @@ form button {
   border: none;
   background-color: #ffffff00;
 }
+
 /* -- BOTTOM BLOC ---------------- */
 .bottomBloc {
   display: flex;
@@ -235,5 +214,50 @@ form button {
 .bottomBloc svg {
   color: var(--black);
   font-size: 2px;
+}
+.displayInputSmall {
+  display: none;
+}
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 1090px) {
+  .container {
+    padding: 10px 20px 20px 20px;
+  }
+}
+@media (max-width: 970px) {
+  .hideBtnSmall {
+    display: none;
+  }
+
+  .bottomBloc {
+    justify-content: flex-start;
+    gap: 13px;
+    overflow: scroll hidden;
+    -ms-overflow-style: none; /* Hide scrollbar for Edge */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .bottomBloc::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bottomBloc :is(span) {
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 650px) {
+  header {
+    height: fit-content;
+  }
+  .hideInputSmall {
+    display: none;
+  }
+  .displayInputSmall {
+    display: block;
+    margin: 25px 0;
+  }
 }
 </style>

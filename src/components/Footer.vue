@@ -3,7 +3,7 @@
 <template>
   <footer>
     <p>
-      Made by <a href="https://github.com/Jonathan-Hachette">Jonathan</a> with
+      Made by <a href="https://jonathan-hachette.netlify.app/">Jonathan</a> with
       <a href="https://vuejs.org/"> Vue.js</a>
     </p>
   </footer>
@@ -17,7 +17,6 @@ footer {
   justify-content: center;
   background-color: var(--grey-light);
 }
-
 a {
   font-weight: bold;
 }

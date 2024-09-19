@@ -83,7 +83,6 @@ const formatedPrice = computed(() => {
 <template>
   <main>
     <div class="container">
-      <!-- Affichage du loader tant que les informations de la requête n'ont pas été reçu et transmis à la 'ref' -->
       <p v-if="!offerInfos.id">Chargement en cours ...</p>
 
       <div v-else class="offerBloc">
@@ -112,11 +111,17 @@ const formatedPrice = computed(() => {
 
           <p class="date">{{ formatDate }}</p>
 
+          <RouterLink
+            :to="{ name: 'payment', params: { id: offerInfos.id } }"
+            class="displayButtonSmall"
+            >Acheter</RouterLink
+          >
+
           <h2>Description</h2>
           <p>{{ offerInfos.attributes.description }}</p>
 
           <p class="city">
-            <font-awesome-icon :icon="['fas', 'map-marker-alt']" /> Agon-Coutainville (50230)
+            <font-awesome-icon :icon="['fas', 'location-dot']" /> Agon-Coutainville (50230)
           </p>
         </div>
 
@@ -126,9 +131,9 @@ const formatedPrice = computed(() => {
               <img
                 :src="offerInfos.attributes.owner.data.attributes.avatar.data.attributes.url"
                 :alt="offerInfos.attributes.owner.data.attributes.username"
-                v-if="offerInfos.attributes.owner?.data?.attributes?.avatar?.data"
+                v-if="offerInfos.attributes.owner.data.attributes.avatar.data"
               />
-              <p>{{ offerInfos.attributes.owner?.data.attributes.username }}</p>
+              <p>{{ offerInfos.attributes.owner.data.attributes.username }}</p>
             </div>
 
             <p class="identity">
@@ -153,11 +158,11 @@ const formatedPrice = computed(() => {
 .container {
   padding: 30px 0;
 }
-
 .offerBloc {
   display: flex;
   gap: 20px;
 }
+
 /* -- FIRST COLUMN ---------------- */
 .firstCol {
   width: 67%;
@@ -203,6 +208,7 @@ h2 {
 .firstCol svg:last-child {
   right: 10px;
 }
+
 /* -- SECOND COLUMN ---------------- */
 .secondCol {
   width: 33%;
@@ -250,11 +256,9 @@ h2 {
   margin: 50px 0 25px 0;
   padding-top: 20px;
 }
-
 svg {
   margin-right: 3px;
 }
-
 .secondCol > div:last-child {
   margin-top: 15px;
   padding: 15px 0;
@@ -263,7 +267,6 @@ svg {
   flex-direction: column;
   gap: 10px;
 }
-
 button,
 a {
   border: none;
@@ -277,8 +280,33 @@ a {
   background-color: var(--orange);
   text-align: center;
 }
-
 button:last-child {
   background-color: var(--blue-dark);
+}
+.displayButtonSmall {
+  display: none;
+}
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+
+@media (max-width: 1090px) {
+  .container {
+    padding: 10px 20px 20px 20px;
+    margin-top: 160px;
+  }
+}
+
+@media (max-width: 970px) {
+  .firstCol {
+    width: 100%;
+  }
+  .secondCol {
+    display: none;
+  }
+  .displayButtonSmall {
+    display: block;
+    margin-top: 20px;
+  }
 }
 </style>

@@ -457,4 +457,38 @@ img {
   font-size: 20px;
   margin-right: 10px;
 }
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 880px) {
+  .columns {
+    flex-direction: column-reverse;
+  }
+  .secondCol {
+    width: 100%;
+  }
+}
+
+@media (max-width: 650px) {
+  .container {
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: 460px) {
+  .optionsPart > p {
+    font-size: 12px;
+  }
+  h3,
+  h4,
+  p,
+  .price {
+    font-size: 14px;
+  }
+  img {
+    width: 70px;
+    height: 70px;
+  }
+}
 </style>

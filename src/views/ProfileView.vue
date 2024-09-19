@@ -256,4 +256,50 @@ img {
   cursor: pointer;
   color: var(--orange);
 }
+
+/* -------------------------------- */
+/* -- MEDIA QUERY ----------------- */
+/* -------------------------------- */
+@media (max-width: 1090px) {
+  .container {
+    padding: 100px 20px 20px 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .offer > div {
+    gap: 20px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .price {
+    font-size: 16px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 460px) {
+  .offer {
+    gap: 20px;
+    height: fit-content;
+    flex-direction: column;
+  }
+  .offer > div {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .title {
+    font-size: 20px;
+  }
+  .offer img {
+    height: fit-content;
+    width: 100%;
+  }
+  svg {
+    align-self: flex-end;
+  }
+}
 </style>

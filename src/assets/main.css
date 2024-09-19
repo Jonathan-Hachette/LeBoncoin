@@ -33,7 +33,6 @@ main {
   max-width: 1050px;
   margin: 0 auto;
   height: 100%;
-  padding: 30px 0;
 }
 
 a {
@@ -51,4 +50,10 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   outline: none;
+}
+
+@media (max-width: 1090px) {
+  .container {
+    padding: 10px 20px 20px 20px;
+  }
 }
