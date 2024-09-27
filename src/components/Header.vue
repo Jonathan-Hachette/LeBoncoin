@@ -1,7 +1,6 @@
 <script setup>
-import { RouterLink } from 'vue-router'
 import { inject } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 import BtnPublishOffer from './BtnPublishOffer.vue'
 import SearchByTitle from './SearchByTitle.vue'
@@ -86,7 +85,7 @@ const whenBecomeEmpty = (value) => {
 
             <div>
               <font-awesome-icon
-                :icon="['fas', 'arrow-right-from-bracket']"
+                :icon="['fas', 'sign-out-alt']"
                 @click="disconnection"
                 class="disconnection"
               />
